@@ -11,7 +11,7 @@ from image_stuffs import *
 path = '../inputs'
 img_names = os.listdir(path)
 
-num_imgs = 3
+num_imgs = 4
 imgs = [f'{path}/{img_name}' for img_name in img_names[:num_imgs]]
 imgs_pd = [cv2.imread(path) for path in imgs]
 
@@ -22,8 +22,8 @@ f = FaceRecognizer()
 detections = f.image_to_detections(imgs)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
-    res = draw_rect_with_detection(img, detection)
-    cv2.imwrite(f'../outputs/widerface_{idx}.jpg', res)
+    res = blur_image(img, detection)
+    cv2.imwrite(f'../outputs/widerface_{idx}_blur.jpg', res)
 
 # %%
 # Face recognition. (Coco128)
@@ -40,5 +40,5 @@ f.set_model_m(FaceRecognizer.default_models['coco128'])
 detections = f.image_to_detections(imgs)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
-    res = draw_rect_with_detection(img, detection)
-    cv2.imwrite(f'../outputs/coco128_{idx}.jpg', res)
+    res = blur_image(img, detection)
+    cv2.imwrite(f'../outputs/coco128_{idx}_blur.jpg', res)
