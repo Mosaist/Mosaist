@@ -41,6 +41,9 @@ def mosaic_image(image: np.ndarray, detections: list) -> np.ndarray:
     return_image = image.copy()
 
     for detection in detections:
+        if not detection:
+            continue
+
         x1, y1 = detection['xmin'], detection['ymin']
         x2, y2 = detection['xmax'], detection['ymax']
 
