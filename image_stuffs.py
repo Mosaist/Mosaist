@@ -39,8 +39,8 @@ def blur_image(image: np.ndarray, detections: list) -> np.ndarray:
     """
 
     image_mask = np.zeros(image.shape[:2], np.uint8)
+    blur_mask = image_mask.copy()
     image_mask.fill(255)
-    blur_mask = np.zeros(image.shape[:2], np.uint8)
 
     for detection in detections:
         image_mask[detection['ymin']:detection['ymax'], detection['xmin']:detection['xmax']] = 0

@@ -19,7 +19,7 @@ f = FaceRecognizer()
 
 # %%
 # Face recognition.
-detections = f.image_to_detections(imgs)
+detections = f.image_to_detections(imgs_pd)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
     res = blur_image(img, detection)
@@ -42,3 +42,5 @@ detections = f.image_to_detections(imgs)
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
     res = blur_image(img, detection)
     cv2.imwrite(f'../outputs/coco128_{idx}_blur.jpg', res)
+
+# %%

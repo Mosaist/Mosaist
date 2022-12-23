@@ -57,12 +57,12 @@ class FaceRecognizer:
 
         self.model = model
 
-    def image_to_detections(self, image_paths: list) -> list:
+    def image_to_detections(self, images: list) -> list:
         """
-        이미지 경로를 바탕으로 얼굴 인식 수행
+        이미지를 바탕으로 얼굴 인식 수행
 
         Params:
-            image_paths 얼굴 인식을 수행할 이미지 경로.
+            images: 얼굴 인식을 수행할 이미지 경로 또는 numpy.ndarray.
 
         Returns:
             이미지에 대한 인식 결과를 dict로 반환.
@@ -78,5 +78,5 @@ class FaceRecognizer:
                     'class': cls,
                     'name': name,
                 } for xmin, ymin, xmax, ymax, cls, name in zip(result['xmin'], result['ymin'], result['xmax'], result['ymax'], result['class'], result['name'])
-            ] for result in self.model(image_paths).pandas().xyxy
+            ] for result in self.model(images).pandas().xyxy
         ]
