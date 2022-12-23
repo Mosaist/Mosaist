@@ -1,5 +1,8 @@
 # %%
 # Imoprt libs.
+import sys
+
+sys.path.append('../image_handling')
 from facial_stuffs import *
 from image_stuffs import *
 from video_stuffs import *

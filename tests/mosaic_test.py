@@ -1,8 +1,10 @@
 # %%
 # Load libs.
 import os
+import sys
 import cv2
 
+sys.path.append('../image_handling')
 from facial_stuffs import *
 from image_stuffs import *
 

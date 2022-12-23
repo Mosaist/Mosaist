@@ -1,7 +1,8 @@
+.vscode
+__pycache__
+
 datasets/*
 environments/*
 inputs/*
 outputs/*
 yolov*
-
-__pycache__
