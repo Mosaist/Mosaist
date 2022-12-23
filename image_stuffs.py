@@ -25,33 +25,44 @@ def rect_image(image: np.ndarray, detections: list) -> np.ndarray:
 
     return img
 
-def blur_image(image: np.ndarray, detections: list) -> np.ndarray:
+def mosaic_image(image: np.ndarray, detections: list) -> np.ndarray:
     """
     이미지와 인식 결과를 합성
-    인식된 이미지를 블러 처리.
+    인식된 이미지를 모자이크 처리.
 
     Param:
         image: 인식 대상 이미지.
         detections: 인식 결과 리스트.
 
     Returns:
-        합성된 이미지
+        합성된 이미지.
     """
 
-    image_mask = np.zeros(image.shape[:2], np.uint8)
-    blur_mask = image_mask.copy()
-    image_mask.fill(255)
+    return_image = image.copy()
 
     for detection in detections:
-        image_mask[detection['ymin']:detection['ymax'], detection['xmin']:detection['xmax']] = 0
-        blur_mask[detection['ymin']:detection['ymax'], detection['xmin']:detection['xmax']] = 255
+        x1, y1 = detection['xmin'], detection['ymin']
+        x2, y2 = detection['xmax'], detection['ymax']
 
-    blur_factor = (image.shape[0] + image.shape[1]) * (60 / 5000)
+        return_image[y1:y2, x1:x2] = _pixelate(return_image[y1:y2, x1:x2])
 
-    original_image = image.copy()
-    blurred_image = cv2.GaussianBlur(original_image, (0, 0), blur_factor)
+    return return_image
 
-    original_image = cv2.bitwise_and(original_image, original_image, mask=image_mask)
-    blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=blur_mask)
+def _pixelate(image: np.ndarray) -> np.ndarray:
+    """
+    *내부 함수
 
-    return cv2.bitwise_or(original_image, blurred_image)
+    이미지 모자이크 처리
+
+    Param:
+        image: 대상 이미지.
+
+    Returns:
+        합성된 이미지.
+    """
+
+    height, width, _ = image.shape
+
+    temp = cv2.resize(image, (8, 8), interpolation=cv2.INTER_LINEAR)
+
+    return cv2.resize(temp, (width, height), interpolation=cv2.INTER_NEAREST)

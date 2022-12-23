@@ -16,7 +16,7 @@ detections = f.image_to_detections(images)
 
 # %%
 # Blur and save as video.
-blurred_images = [blur_image(img, det) for img, det in zip(images, detections)]
-save_images_as_video(blurred_images, '../outputs/videos/test.mp4')
+mosaiced_images = [mosaic_image(img, det) for img, det in zip(images, detections)]
+save_images_as_video(mosaiced_images, '../outputs/videos/test.mp4')
 
 # %%

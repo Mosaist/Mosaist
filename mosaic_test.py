@@ -22,8 +22,8 @@ f = FaceRecognizer()
 detections = f.image_to_detections(imgs_pd)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
-    res = blur_image(img, detection)
-    cv2.imwrite(f'../outputs/widerface_{idx}_blur.jpg', res)
+    res = mosaic_image(img, detection)
+    cv2.imwrite(f'../outputs/widerface_{idx}_mosaic.jpg', res)
 
 # %%
 # Face recognition. (Coco128)
@@ -40,7 +40,7 @@ f.set_model_m(FaceRecognizer.default_models['coco128'])
 detections = f.image_to_detections(imgs)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
-    res = blur_image(img, detection)
-    cv2.imwrite(f'../outputs/coco128_{idx}_blur.jpg', res)
+    res = mosaic_image(img, detection)
+    cv2.imwrite(f'../outputs/coco128_{idx}_mosaic.jpg', res)
 
 # %%
