@@ -1,6 +1,7 @@
 datasets/*
+environments/*
 inputs/*
 outputs/*
-yolov5
+yolov*
 
 __pycache__
