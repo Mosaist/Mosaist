@@ -10,6 +10,7 @@ from image_stuffs import *
 # Set variables.
 path = '../inputs'
 img_names = os.listdir(path)
+img_names = list(filter(lambda e: e[-3:] == 'png' or e[-3:] == 'jpg', img_names))
 
 num_imgs = 4
 imgs = [f'{path}/{img_name}' for img_name in img_names[:num_imgs]]
