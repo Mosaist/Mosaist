@@ -1,5 +1,7 @@
 import torch
 
+from config import *
+
 class FaceRecognizer:
     """
     얼굴 인식 관련 클래스
@@ -7,8 +9,8 @@ class FaceRecognizer:
     """
 
     default_model_paths: dict = {
-        'widerface': '../yolov5/runs/train/widerface-yolov5n/weights/best.pt',
-        'coco128': '../yolov5/runs/train/coco128-yolov5s/weights/best.pt',
+        'widerface': MODEL_PREFIX + 'widerface-yolov5n/weights/best.pt',
+        'coco128': MODEL_PREFIX + 'coco128-yolov5s/weights/best.pt',
     }
     """
     widerface와 coco128에 대한 기본 모델 경로.
