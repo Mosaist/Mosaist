@@ -43,6 +43,16 @@ def save_images_as_video(images: list, path: str, fps: float=30) -> cv2.VideoWri
     out.release()
 
 def get_fps(video: cv2.VideoCapture) -> float:
+    """
+    동영상의 FPS 반환
+
+    Params:
+        FPS를 추출할 동영상.
+
+    Returns:
+        동영상의 FPS.
+    """
+
     major_ver, _, _ = (cv2.__version__).split('.')
  
     if int(major_ver)  < 3 :
