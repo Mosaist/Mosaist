@@ -24,7 +24,7 @@ def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
 
     return images
 
-def save_images_as_video(images: list, path: str, fps: int=30) -> cv2.VideoWriter:
+def save_images_as_video(images: list, path: str, fps: float=30) -> cv2.VideoWriter:
     """
     이미지 리스트를 동영상으로 저장
 
@@ -41,3 +41,12 @@ def save_images_as_video(images: list, path: str, fps: int=30) -> cv2.VideoWrite
     for image in images:
         out.write(image)
     out.release()
+
+def get_fps(video: cv2.VideoCapture) -> float:
+    major_ver, _, _ = (cv2.__version__).split('.')
+ 
+    if int(major_ver)  < 3 :
+        return video.get(cv2.cv.CV_CAP_PROP_FPS)
+    else :
+        return video.get(cv2.CAP_PROP_FPS)
+ 
