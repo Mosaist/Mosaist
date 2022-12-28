@@ -1,5 +1,8 @@
+import os
 import cv2
 import numpy as np
+
+from config import *
 
 def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
     """
@@ -59,4 +62,53 @@ def get_fps(video: cv2.VideoCapture) -> float:
         return video.get(cv2.cv.CV_CAP_PROP_FPS)
     else :
         return video.get(cv2.CAP_PROP_FPS)
- 
+
+def video_to_dataset(video_name: str, dataset_name: str):
+    video = cv2.VideoCapture(INPUT_DIR + 'videos/' + video_name)
+    images = video_to_images(video)
+
+    dataset_path = DATASET_PREFIX + dataset_name + '/'
+    if not os.path.exists(dataset_path):
+        os.makedirs(dataset_path)
+
+    image_path = dataset_path + 'images/'
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
+
+    for i, image in enumerate(images):
+        cv2.imwrite(image_path + str(i) + '.png', image)
+
+    _init_dataset(dataset_path)
+
+def _init_dataset(dataset_path: str):
+    image_path = dataset_path + 'images/'
+
+    if not os.path.exists(dataset_path):
+        raise ValueError(f'Path not exist: {dataset_path}')
+    if not os.path.exists(image_path):
+        raise ValueError(f'Path not exist: {image_path}')
+
+    label_path = dataset_path + 'labels/'
+
+    if not os.path.exists(label_path):
+        os.mkdir(label_path)
+
+    image_names = os.listdir(image_path)
+
+    for image_name in image_names:
+        label_file = open(label_path + image_name.split('.')[0] + '.txt', 'w')
+        label_file.write('0 0.5 0.5 1 1')
+        label_file.close()
+
+    data_info_path = YOLO_PREFIX + 'data/'
+    data_info_file = open(data_info_path + dataset_path.split('/')[-2] + '.yaml', 'w')
+    data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
+
+def _get_yaml(dataset_path: str, image_path: str, val_path: str) -> str:
+    return f'''path: {dataset_path}
+train: {image_path}
+val: {val_path}
+
+names:
+    0: object
+'''

@@ -10,6 +10,8 @@ from image_stuffs import *
 webcam = cv2.VideoCapture(1)
 f = FaceRecognizer()
 
+f.set_model(MODEL_PREFIX + 'face/weights/best.pt')
+
 if not webcam.isOpened():
     print("Could not open webcam")
     exit()
@@ -29,7 +31,7 @@ while webcam.isOpened():
     prev_time = time.time()
 
     detections = f.image_to_detections(frame)
-    frame = mosaic_image(frame, detections[0])
+    frame = rect_image(frame, detections[0])
 
     cv2.imshow("test", frame)
 
