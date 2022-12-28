@@ -10,7 +10,7 @@ class FaceRecognizer:
 
     default_model_paths: dict = {
         'widerface': MODEL_PREFIX + 'widerface-yolov5n/weights/best.pt',
-        'coco128': MODEL_PREFIX + 'coco128-yolov5s/weights/best.pt',
+        'coco128': MODEL_PREFIX + 'coco128-yolov5n/weights/best.pt',
     }
     """
     widerface와 coco128에 대한 기본 모델 경로.
