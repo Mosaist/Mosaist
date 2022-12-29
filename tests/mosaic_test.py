@@ -10,23 +10,25 @@ from image_stuffs import *
 
 # %%
 # Set variables.
-path = '../inputs'
+path = '../inputs/images/'
 img_names = os.listdir(path)
-img_names = list(filter(lambda e: e[-3:] == 'png' or e[-3:] == 'jpg', img_names))
+img_names = list(filter(lambda e: e[:3] == 'cup', img_names))
 
-num_imgs = 4
+num_imgs = 10
 imgs = [f'{path}/{img_name}' for img_name in img_names[:num_imgs]]
 imgs_pd = [cv2.imread(path) for path in imgs]
 
 f = FaceRecognizer()
+f.set_model(MODEL_PREFIX + 'cup2/weights/best.pt')
 
 # %%
 # Face recognition.
 detections = f.image_to_detections(imgs_pd)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
-    res = mosaic_image(img, detection)
-    cv2.imwrite(f'../outputs/widerface_{idx}_mosaic.jpg', res)
+    res = rect_image(img, detection)
+    # cv2.imwrite(f'../outputs/widerface_{idx}_mosaic.jpg', res)
+    cv2.imwrite(f'../outputs/cup_{idx}_mosaic.jpg', res)
 
 # %%
 # Face recognition. (Coco128)

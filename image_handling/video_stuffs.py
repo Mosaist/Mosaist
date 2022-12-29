@@ -64,6 +64,17 @@ def get_fps(video: cv2.VideoCapture) -> float:
         return video.get(cv2.CAP_PROP_FPS)
 
 def video_to_dataset(video_name: str, dataset_name: str):
+    """
+    동영상을 데이터셋으로 변환
+    inputs/videos의 특정 동영상을 데이터셋으로 변환.
+    라벨은 동영상 크기 전체를 포괄하는 영역으로 설정.
+    (0 0.5 0.5 1 1)
+
+    Params:
+        video_name: 데이터셋으로 변환코자 하는 동영상 이름. (확장자 포함)
+        dataset_name: 변환 후 데이터셋의 이름.
+    """
+
     video = cv2.VideoCapture(INPUT_DIR + 'videos/' + video_name)
     images = video_to_images(video)
 
@@ -81,6 +92,15 @@ def video_to_dataset(video_name: str, dataset_name: str):
     _init_dataset(dataset_path)
 
 def _init_dataset(dataset_path: str):
+    """
+    *내부 함수
+
+    이미지 묶음으로 변환된 동영상 프레임에 라벨 부여.
+
+    Params:
+        dataset_path: 대상 데이터셋 경로.
+    """
+
     image_path = dataset_path + 'images/'
 
     if not os.path.exists(dataset_path):
@@ -105,6 +125,20 @@ def _init_dataset(dataset_path: str):
     data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
 
 def _get_yaml(dataset_path: str, image_path: str, val_path: str) -> str:
+    """
+    *내부 함수
+
+    데이터셋에 대한 yaml 설정 문자열 생성
+
+    Params:
+        dataset_path: 대상 데이터셋 경로.
+        image_path: 이미지 파일 디렉토리 경로.
+        val_path: 검증 파일 디렉토리 경로.
+
+    Returns:
+        yaml 설정 문자열.
+    """
+
     return f'''path: {dataset_path}
 train: {image_path}
 val: {val_path}
