@@ -11,17 +11,17 @@ from config import *
 # %%
 # Set vars.
 dataset_name = 'test2'
-path_root = DATASET_PREFIX + dataset_name + '/'
-path_images = path_root + 'images/'
-path_labels = path_root + 'labels/'
-path_rect = path_root + 'rect/'
+path_root = f'{DATASET_PATH}/{dataset_name}'
+path_images = f'{DATASET_PATH}/{dataset_name}/images'
+path_labels = f'{DATASET_PATH}/{dataset_name}/labels'
+path_rect = f'{DATASET_PATH}/{dataset_name}/rect'
 
 f = FaceRecognizer()
 
 # %%
 # Load images.
 images = [
-    { 'name': image_name, 'image': cv2.imread(path_images + image_name) }
+    { 'name': image_name, 'image': cv2.imread(f'{path_images}/{image_name}') }
     for image_name in os.listdir(path_images)
 ]
 
@@ -48,10 +48,10 @@ for image in images:
 
         labels.append(f'{detection["class"]} {x} {y} {w} {h}')
 
-    image_rected = rect_image(image['image'], image['detections'][0])
-    cv2.imwrite(path_rect + image['name'], image_rected)
-
-    with open(path_labels + image['name'][:-4] + '.txt', 'w') as f:
+    with open(f'{path_labels}/{image["name"][:-4]}.txt', 'w') as f:
         f.write('\n'.join(labels))
+
+    image_rected = rect_image(image['image'], image['detections'][0])
+    cv2.imwrite(f'{path_rect}/{image["name"]}', image_rected)
 
 # %%

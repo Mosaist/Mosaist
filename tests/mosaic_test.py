@@ -19,7 +19,7 @@ imgs = [f'{path}/{img_name}' for img_name in img_names[:num_imgs]]
 imgs_pd = [cv2.imread(path) for path in imgs]
 
 f = FaceRecognizer()
-f.set_model(MODEL_DIR + 'cup2/weights/best.pt')
+f.set_model(f'{MODEL_PATH}/cup2/weights/best.pt')
 
 # %%
 # Face recognition.
@@ -27,8 +27,7 @@ detections = f.image_to_detections(imgs_pd)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
     res = rect_image(img, detection)
-    # cv2.imwrite(f'../outputs/widerface_{idx}_mosaic.jpg', res)
-    cv2.imwrite(f'../outputs/cup_{idx}_mosaic.jpg', res)
+    cv2.imwrite(f'{OUTPUT_PATH}/cup_{idx}_rect.jpg', res)
 
 # %%
 # Face recognition. (Coco128)
@@ -46,6 +45,6 @@ detections = f.image_to_detections(imgs)
 
 for idx, (img, detection) in enumerate(zip(imgs_pd, detections)):
     res = mosaic_image(img, detection)
-    cv2.imwrite(f'../outputs/coco128_{idx}_mosaic.jpg', res)
+    cv2.imwrite(f'{OUTPUT_PATH}/coco128_{idx}_mosaic.jpg', res)
 
 # %%
