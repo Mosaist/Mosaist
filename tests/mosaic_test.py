@@ -19,7 +19,7 @@ imgs = [f'{path}/{img_name}' for img_name in img_names[:num_imgs]]
 imgs_pd = [cv2.imread(path) for path in imgs]
 
 f = FaceRecognizer()
-f.set_model(MODEL_PREFIX + 'cup2/weights/best.pt')
+f.set_model(MODEL_DIR + 'cup2/weights/best.pt')
 
 # %%
 # Face recognition.

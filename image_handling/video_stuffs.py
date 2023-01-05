@@ -75,14 +75,14 @@ def video_to_dataset(video_name: str, dataset_name: str):
         dataset_name: 변환 후 데이터셋의 이름.
     """
 
-    video = cv2.VideoCapture(INPUT_DIR + 'videos/' + video_name)
+    video = cv2.VideoCapture(f'{INPUT_PATH}/videos/{video_name}')
     images = video_to_images(video)
 
-    dataset_path = DATASET_PREFIX + dataset_name + '/'
+    dataset_path = f'{DATASET_PATH}/{dataset_name}'
     if not os.path.exists(dataset_path):
         os.makedirs(dataset_path)
 
-    image_path = dataset_path + 'images/'
+    image_path = f'{dataset_path}/images/'
     if not os.path.exists(image_path):
         os.makedirs(image_path)
 
@@ -120,8 +120,8 @@ def _init_dataset(dataset_path: str):
         label_file.write('0 0.5 0.5 1 1')
         label_file.close()
 
-    data_info_path = YOLO_PREFIX + 'data/'
-    data_info_file = open(data_info_path + dataset_path.split('/')[-2] + '.yaml', 'w')
+    data_info_path = f'{YOLO_PATH}/data'
+    data_info_file = open(data_info_path + dataset_path.split('/')[-1] + '.yaml', 'w')
     data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
 
 def _get_yaml(dataset_path: str, image_path: str, val_path: str) -> str:

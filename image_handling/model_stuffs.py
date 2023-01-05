@@ -17,10 +17,10 @@ def train_images(dataset_name: str):
     # epoch: 5, batch: 1000
     # epoch: 10, batch : 64
 
-    path = DATASET_PREFIX + dataset_name
+    path = f'{DATASET_PATH}/{dataset_name}'
     img_names = os.listdir(path)
 
     num_epochs = 10 #5 #4
     num_batch = 64 #32
 
-    os.system(f'python {YOLO_PREFIX}train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')
+    os.system(f'python {YOLO_PATH}/train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')
