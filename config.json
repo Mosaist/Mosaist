@@ -1,0 +1,16 @@
+{
+    "path": {
+        "yoloPath": "yolov5",
+        "modelPath": "yolov5/runs/train",
+        "datasetPath": "datasets",
+        "inputPath": "inputs",
+        "outputPath": "outputs"
+    },
+
+    "back": {
+        "allowedImageExtensions": ["jpg", "png", "jpeg"],
+        "allowedVideoExtensions": ["mp4"],
+        "editPrefix": "edited",
+        "port": 80
+    }
+}

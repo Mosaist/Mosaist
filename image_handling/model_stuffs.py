@@ -16,4 +16,4 @@ def train_images(dataset_name: str):
     num_epochs = 5
     num_batch = 128
 
-    os.system(f'python {YOLO_PREFIX}train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')
+    os.system(f'python {YOLO_PATH}/train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')

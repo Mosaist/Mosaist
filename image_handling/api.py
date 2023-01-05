@@ -9,23 +9,8 @@ from video_stuffs import *
 
 from config import *
 
-ALLOWED_IMAGE_EXTENSIONS = set(['jpg', 'png', 'jpeg'])
-"""
-허용된 이미지 형식
-"""
-
-ALLOWED_VIDEO_EXTENSIONS = set(['mp4'])
-"""
-허용된 동영상 형식
-"""
-
-EDIT_PREFIX = 'edited_'
-"""
-출력 디렉토리에 저장될 파일의 접두어
-"""
-
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = INPUT_DIR
+app.config['UPLOAD_FOLDER'] = INPUT_PATH
 
 f = FaceRecognizer()
 
@@ -69,20 +54,19 @@ def image_mosaic_get():
     Returns:
         변환 성공 여부.
     """
-
     image_name = request.args['image']
 
     if not allowed_image_file(image_name):
         return 'false'
 
     try:
-        image = cv2.imread(INPUT_DIR + image_name)
+        image = cv2.imread(f'{INPUT_PATH}/images/{image_name}')
     except:
         return 'false'
 
     detections = f.image_to_detections(image)
     image = mosaic_image(image, detections[0])
-    cv2.imwrite(OUTPUT_DIR + EDIT_PREFIX + image_name, image)
+    cv2.imwrite(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{image_name}', image)
 
     return 'true'
 
@@ -111,9 +95,9 @@ def image_mosaic_post():
 
     detections = f.image_to_detections(image)
     image = mosaic_image(image, detections[0])
-    cv2.imwrite(OUTPUT_DIR + EDIT_PREFIX + filename, image)
+    cv2.imwrite(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', image)
 
-    return send_file(OUTPUT_DIR + EDIT_PREFIX + filename, mimetype='image/png')
+    return send_file(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', mimetype='image/png')
 
 @app.route('/video/mosaic', methods=['GET'])
 def video_mosaic_get():
@@ -130,7 +114,7 @@ def video_mosaic_get():
         return 'false'
 
     try:
-        video = cv2.VideoCapture(INPUT_DIR + video_name)
+        video = cv2.VideoCapture(f'{INPUT_PATH}/videos/{video_name}')
     except:
         return 'false'
 
@@ -138,7 +122,7 @@ def video_mosaic_get():
 
     detections = f.image_to_detections(images)
     images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
-    save_images_as_video(images, OUTPUT_DIR + EDIT_PREFIX + video_name, get_fps(video))
+    save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{video_name}', get_fps(video))
 
     return 'true'
 
@@ -162,16 +146,17 @@ def video_mosaic_post():
         return 'false'
 
     filename = secure_filename(file.filename)
-    file.save(INPUT_DIR + filename)
+    file.save(f'{INPUT_PATH}/videos/{filename}')
 
-    video = cv2.VideoCapture(str(INPUT_DIR + filename))
+    video = cv2.VideoCapture(str(f'{INPUT_PATH}/videos/{filename}'))
     images = video_to_images(video)
 
     detections = f.image_to_detections(images)
     images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
-    save_images_as_video(images, OUTPUT_DIR + EDIT_PREFIX + filename, get_fps(video))
+    save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', get_fps(video))
 
-    return send_file(OUTPUT_DIR + EDIT_PREFIX + filename, mimetype='image/mp4')
+    return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='image/mp4')
 
 if __name__ == '__main__':
+    print_config()
     app.run(port=PORT)
