@@ -7,10 +7,13 @@ sys.path.append('../image_handling')
 from facial_stuffs import *
 from image_stuffs import *
 
-webcam = cv2.VideoCapture(1)
+# 전면만 있으면 0, 전후면 모두 있으면 1.
+webcam = cv2.VideoCapture(0)
+
 f = FaceRecognizer()
 
-f.set_model(MODEL_PREFIX + 'face/weights/best.pt')
+custom_model_name = 'coco128-yolov5s'
+# f.set_model(MODEL_PREFIX + f'{custom_model_name}/weights/best.pt')
 
 if not webcam.isOpened():
     print("Could not open webcam")
