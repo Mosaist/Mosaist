@@ -14,7 +14,7 @@ app.config['UPLOAD_FOLDER'] = INPUT_PATH
 
 f = FaceRecognizer()
 
-def allowed_image_file(filename):
+def _allowed_image_file(filename):
     """
     이미지 파일에 대한 포맷 확인
 
@@ -28,7 +28,7 @@ def allowed_image_file(filename):
 
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_IMAGE_EXTENSIONS
 
-def allowed_video_file(filename):
+def _allowed_video_file(filename):
     """
     동영상 파일에 대한 포맷 확인
 
@@ -44,7 +44,60 @@ def allowed_video_file(filename):
 
 @app.route('/')
 def home():
-    return 'Hello, world!'
+    return """<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Mosaist</title>
+        <style>
+            h1 { text-align: center; }
+            h4 { text-align: center; }
+            main {
+                width: 800px;
+                margin: 0 auto;
+            }
+
+            .center {
+                display: grid;
+                place-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Mosaist</h1>
+        </header>
+        <hr>
+        <main>
+            <section>
+                <h3>[POST] /image/mosaic</h3>
+                <div class="center">
+                    <p>
+                        body {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"file": "{your_image_file_here}"<br>
+                        }<br>
+                    </p>
+                    <p>.jpg, .png are allowed.</p>
+                </div>
+            </section>
+            <section>
+                <h3>[POST] /video/mosaic</h3>
+                <div class="center">
+                    <p>
+                        body {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp"file": "{your_video_file_here}"<br>
+                        }<br>
+                    </p>
+                    <p>.mp4 is allowed.</p>
+                </div>
+            </section>
+        </main>
+        <hr>
+        <footer>
+            <h4><a href="https://github.com/Mosaist/Mosaist">github</a></h4>
+        </footer>
+    </body>
+</html>"""
 
 @app.route('/image/mosaic', methods=['GET'])
 def image_mosaic_get():
@@ -56,7 +109,7 @@ def image_mosaic_get():
     """
     image_name = request.args['image']
 
-    if not allowed_image_file(image_name):
+    if not _allowed_image_file(image_name):
         return 'false'
 
     try:
@@ -86,7 +139,7 @@ def image_mosaic_post():
     if file.filename == '':
         return 'false'
 
-    if not allowed_image_file(file.filename):
+    if not _allowed_image_file(file.filename):
         return 'false'
 
     filename = secure_filename(file.filename)
@@ -110,7 +163,7 @@ def video_mosaic_get():
 
     video_name = request.args['video']
 
-    if not allowed_video_file(video_name):
+    if not _allowed_video_file(video_name):
         return 'false'
 
     try:
@@ -142,7 +195,7 @@ def video_mosaic_post():
     if file.filename == '':
         return 'false'
 
-    if not allowed_video_file(file.filename):
+    if not _allowed_video_file(file.filename):
         return 'false'
 
     filename = secure_filename(file.filename)
@@ -159,4 +212,4 @@ def video_mosaic_post():
 
 if __name__ == '__main__':
     print_config()
-    app.run(port=PORT)
+    app.run(host=IP, port=PORT)

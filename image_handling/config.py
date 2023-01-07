@@ -57,6 +57,11 @@ EDIT_PREFIX = _json['back']['editPrefix']
 출력 디렉토리에 저장될 파일의 접두어
 """
 
+IP = _json['back']['ip']
+"""
+API 서버 IP
+"""
+
 PORT = _json['back']['port']
 """
 API 서버 포트
@@ -77,5 +82,6 @@ def print_config():
     print(f'    Allowed Image Extensions: {ALLOWED_IMAGE_EXTENSIONS}')
     print(f'    Allowed Video Extensions: {ALLOWED_VIDEO_EXTENSIONS}')
     print(f'    Edit Prefix:              {EDIT_PREFIX}') 
+    print(f'    API Server IP:            {IP}')
     print(f'    API Server Port:          {PORT}')
     print()
