@@ -37,7 +37,7 @@ def save_images_as_video(images: list, path: str, fps: float=30) -> cv2.VideoWri
         fps: 동영상의 FPS (기본, 30)
     """
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*'h264')
     size = (images[0].shape[1], images[0].shape[0])
 
     out = cv2.VideoWriter(path, fourcc, fps, size)
