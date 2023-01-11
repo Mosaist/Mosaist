@@ -17,6 +17,7 @@
     <body>
         <header>
             <h1>Mosaist</h1>
+            <h3 id="status"></h3>
         </header>
         <hr>
         <main class="center">
@@ -28,5 +29,21 @@
         <footer>
             <h4><a href="https://github.com/Mosaist/Mosaist">GitHub</a></h4>
         </footer>
+
+        <script>
+            const status = document.querySelector('#status');
+
+            status.innerHTML = '<i>Checking Service Status</i>';
+
+            fetch('https://kut.unta.io:8080')
+            .then(() => {
+                status.innerHTML = '<i>Service Available</i>';
+                status.style.color = 'green';
+            })
+            .catch(() => {
+                status.innerHTML = '<i>Service Not Available</i>';
+                status.style.color = 'red';
+            });
+        </script>
     </body>
 </html>
