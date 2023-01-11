@@ -214,7 +214,7 @@ def video_mosaic_post():
     images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
     save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', get_fps(video))
 
-    return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='image/mp4')
+    return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='video/mp4')
 
 if __name__ == '__main__':
     print_config()
