@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
-from flask import Flask, request, send_file
+import ssl
+from flask import Flask, request, send_file, make_response
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from facial_stuffs import *
@@ -11,6 +13,8 @@ from config import *
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = INPUT_PATH
+
+CORS(app)
 
 f = FaceRecognizer()
 
@@ -148,9 +152,11 @@ def image_mosaic_post():
 
     detections = f.image_to_detections(image)
     image = mosaic_image(image, detections[0])
-    cv2.imwrite(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', image)
 
-    return send_file(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', mimetype='image/png')
+    response = make_response(cv2.imencode('.png', image)[1].tobytes())
+    response.headers.set('Content-Type', 'image/png')
+
+    return response
 
 @app.route('/video/mosaic', methods=['GET'])
 def video_mosaic_get():
@@ -212,4 +218,6 @@ def video_mosaic_post():
 
 if __name__ == '__main__':
     print_config()
-    app.run(host=IP, port=PORT)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    ssl_context.load_cert_chain(certfile='', keyfile='')
+    app.run(host=IP, port=PORT, ssl_context=ssl_context)
