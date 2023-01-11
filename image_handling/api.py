@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import ssl
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
@@ -152,9 +152,11 @@ def image_mosaic_post():
 
     detections = f.image_to_detections(image)
     image = mosaic_image(image, detections[0])
-    cv2.imwrite(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', image)
 
-    return send_file(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{filename}', mimetype='image/png')
+    response = make_response(cv2.imencode('.png', image)[1].tobytes())
+    response.headers.set('Content-Type', 'image/png')
+
+    return response
 
 @app.route('/video/mosaic', methods=['GET'])
 def video_mosaic_get():
