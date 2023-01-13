@@ -19,13 +19,29 @@
                 position: relative;
 				display: block;
 			}
-
             .photo > img {
 				width: 100%;
 				max-width: auto;
 				height: auto;
 				margin-bottom: 30px;
 			}
+            video { 
+                width:100%;
+                max-width:640px;
+                height:auto;
+             }
+            
+            /*.video {
+				width: 42%;
+                position: relative;
+				display: block;
+			}
+            .video > video {
+				width: 100%;
+				max-width: auto;
+				height: auto;
+				margin-bottom: 30px;
+			}*/
 
         </style>
     </head>
@@ -42,7 +58,14 @@
             </div>-->
             <h3><a href="./imageMosaic.html">Image Mosaic</a></h3>
             <h3><a href="./videoMosaic.html">Video Mosaic</a></h3>
-            <video  src="download.mp4"  controls>test</video>
+            
+            <div class="video">
+                <!--<video  src="download.mp4"  controls>test</video>-->
+                <video width="640" height="360" controls preload="metadata">
+                    <source src="download.mp4" type="video/mp4">
+                  </video>
+            </div>
+           
             <h3><a href="./realTimeMosaic.html">Real-Time Mosaic</a></h3>
         </main>
         <hr>
