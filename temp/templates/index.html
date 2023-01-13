@@ -2,6 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mosaist</title>
         <style>
             h1 { text-align: center; }
@@ -12,6 +13,20 @@
                 display: grid;
                 place-items: center;
             }
+
+            .photo {
+				width: 42%;
+                position: relative;
+				display: block;
+			}
+
+            .photo > img {
+				width: 100%;
+				max-width: auto;
+				height: auto;
+				margin-bottom: 30px;
+			}
+
         </style>
     </head>
     <body>
@@ -21,9 +36,14 @@
         </header>
         <hr>
         <main class="center">
+            <!--
+            <div class="photo">
+                <img src="images/test_9_mosaic.jpg" alt="">
+            </div>-->
             <h3><a href="./imageMosaic.html">Image Mosaic</a></h3>
             <h3><a href="./videoMosaic.html">Video Mosaic</a></h3>
             <h3><a href="./realTimeMosaic.html">Real-Time Mosaic</a></h3>
+            <video  src="download.mp4"  controls>test</video>
         </main>
         <hr>
         <footer>
