@@ -67,6 +67,11 @@ PORT = _json['back']['port']
 API 서버 포트
 """
 
+SOCKET_PORT = _json['back']['socketPort']
+"""
+Socket API 서버 포트
+"""
+
 def print_config():
     print()
     print(f'Path Configurations:')
@@ -84,4 +89,5 @@ def print_config():
     print(f'    Edit Prefix:              {EDIT_PREFIX}') 
     print(f'    API Server IP:            {IP}')
     print(f'    API Server Port:          {PORT}')
+    print(f'    Socket API Server Port:   {SOCKET_PORT}')
     print()

@@ -18,12 +18,17 @@
         <header>
             <h1>Mosaist</h1>
             <h3 id="status"></h3>
+            <h3 id="socket-status"></h3>
         </header>
         <hr>
         <main class="center">
             <h3><a href="./imageMosaic.html">Image Mosaic</a></h3>
             <h3><a href="./videoMosaic.html">Video Mosaic</a></h3>
             <h3><a href="./realTimeMosaic.html">Real-Time Mosaic</a></h3>
+            <br>
+            <h3><a href="./imageMosaicSocket.html">[WS] Image Mosaic</a></h3>
+            <h3><a href="./videoMosaicSocket.html">[WS] Video Mosaic</a></h3>
+            <h3><a href="./realTimeMosaicSocket.html">[WS] Real-Time Mosaic</a></h3>
         </main>
         <hr>
         <footer>
@@ -44,6 +49,34 @@
                 status.innerHTML = '<i>Service Not Available</i>';
                 status.style.color = 'red';
             });
+
+            const socketStatus = document.querySelector('#socket-status');
+            socketStatus.innerHTML = '<i>Disconnected</i>';
+            socketStatus.style.color = 'red';
+
+            const socketURL = 'wss://kut.unta.io:8080'
+            const socket = new WebSocket(socketURL);
+
+            socket.addEventListener('open', (event) => {
+                console.log(`Socket ${socketURL} has been connected.`);
+
+                socketStatus.innerHTML = '<i>Connected</i>';
+                socketStatus.style.color = 'green';
+            })
+
+            socket.addEventListener('error', (event) => {
+                console.log(`An error has occured during ${socketURL} socker connection.`);
+
+                socketStatus.innerHTML = '<i>Disconnected</i>';
+                socketStatus.style.color = 'red';
+            })
+
+            socket.addEventListener('close', (event) => {
+                console.log(`Socket ${socketURL} has been disconnected.`);
+
+                socketStatus.innerHTML = '<i>Disconnected</i>';
+                socketStatus.style.color = 'red';
+            })
         </script>
     </body>
 </html>

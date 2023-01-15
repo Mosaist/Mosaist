@@ -12,6 +12,7 @@
         "allowedVideoExtensions": ["mp4"],
         "editPrefix": "edited",
         "ip": "0.0.0.0",
-        "port": 8080
+        "port": 8080,
+        "socketPort": 8081
     }
 }
