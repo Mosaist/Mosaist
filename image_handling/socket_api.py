@@ -52,7 +52,7 @@ async def main():
 
     print_config()
 
-    async with websockets.serve(root, IP, SOCKET_PORT, ssl=ssl_context):
+    async with websockets.serve(root, IP, SOCKET_PORT, ssl=ssl_context, max_size=10000000):
         await asyncio.Future()
 
 asyncio.run(main())
