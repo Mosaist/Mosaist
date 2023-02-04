@@ -37,13 +37,18 @@ def save_images_as_video(images: list, path: str, fps: float=30) -> cv2.VideoWri
         fps: 동영상의 FPS (기본, 30)
     """
 
-    fourcc = cv2.VideoWriter_fourcc(*'h264')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     size = (images[0].shape[1], images[0].shape[0])
 
     out = cv2.VideoWriter(path, fourcc, fps, size)
     for image in images:
         out.write(image)
     out.release()
+
+    use_powershell = 'powershell' if os.name == 'nt' else ''
+    os.system(f'{use_powershell} mv {path} {path}.temp')
+    os.system(f'{use_powershell} ffmpeg -i {path}.temp -vcodec libx264 {path}')
+    os.system(f'{use_powershell} rm {path}.temp')
 
 def get_fps(video: cv2.VideoCapture) -> float:
     """

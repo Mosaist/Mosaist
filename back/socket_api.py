@@ -1,10 +1,11 @@
-import datetime
-import asyncio
-import websockets
-import ssl
 import base64
+import datetime
+
+import asyncio
 import cv2
 import numpy as np
+import ssl
+import websockets
 
 from facial_stuffs import *
 from image_stuffs import *
@@ -13,8 +14,18 @@ from video_stuffs import *
 from config import *
 
 f = FaceRecognizer()
+"""
+얼굴 인식 관련 모델
+"""
 
-async def root(websocket):
+async def socket_root(websocket):
+    """
+    웹소켓 서버 루트
+
+    Params:
+        websocket: 웹소켓 인스턴스.
+    """
+
     async for message in websocket:
         method, content = message.split('::')
         response = 'false'
@@ -23,7 +34,7 @@ async def root(websocket):
 
         try:
             if method == 'image-mosaic':
-                response = _mosaic_image(content)
+                response = socket_mosaic_image(content)
             elif method == 'video-mosaic':
                 pass
             else:
@@ -33,7 +44,17 @@ async def root(websocket):
 
         await websocket.send(response)
 
-def _mosaic_image(content):
+def socket_mosaic_image(content):
+    """
+    웹소켓에 대응하는 이미지 모자이크
+
+    Params:
+        content: 웹소켓으로 전송 받은 이미지 파일.
+
+    Returns:
+        변환된 이미지.
+    """
+
     encoded_image = np.frombuffer(base64.b64decode(content), np.uint8)
     image = cv2.imdecode(encoded_image, cv2.IMREAD_COLOR)
 
@@ -43,16 +64,13 @@ def _mosaic_image(content):
     return cv2.imencode('.png', image)[1].tobytes()
 
 async def main():
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-
-    ssl_cert = ''
-    ssl_key = ''
-
-    ssl_context.load_cert_chain(ssl_cert, keyfile=ssl_key)
-
     print_config()
 
-    async with websockets.serve(root, IP, SOCKET_PORT, ssl=ssl_context, max_size=10000000):
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain(certfile=SSL_CERT, keyfile=SSL_KEY)
+
+    async with websockets.serve(socket_root, IP, SOCKET_PORT, ssl=ssl_context, max_size=10000000):
         await asyncio.Future()
 
-asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(main())
