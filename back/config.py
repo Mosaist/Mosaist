@@ -67,6 +67,21 @@ PORT = _json['back']['port']
 API 서버 포트
 """
 
+SOCKET_PORT = _json['back']['socketPort']
+"""
+Socket API 서버 포트
+"""
+
+SSL_CERT = _json['back']['sslCert']
+"""
+SSL 인증서 경로
+"""
+
+SSL_KEY = _json['back']['sslKey']
+"""
+SSL 인증서 키 경로
+"""
+
 def print_config():
     print()
     print(f'Path Configurations:')
@@ -84,4 +99,7 @@ def print_config():
     print(f'    Edit Prefix:              {EDIT_PREFIX}') 
     print(f'    API Server IP:            {IP}')
     print(f'    API Server Port:          {PORT}')
+    print(f'    Socket API Server Port:   {SOCKET_PORT}')
+    print(f'    SSL Certification:        {SSL_CERT}')
+    print(f'    SSL Certification Key:    {SSL_KEY}')
     print()

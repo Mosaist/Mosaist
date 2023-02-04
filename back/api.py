@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import ssl
+
 from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -12,11 +13,17 @@ from video_stuffs import *
 from config import *
 
 app = Flask(__name__)
+"""
+플라스크 HTTP 서버 인스턴스
+"""
 app.config['UPLOAD_FOLDER'] = INPUT_PATH
 
 CORS(app)
 
 f = FaceRecognizer()
+"""
+얼굴 인식 관련 모델
+"""
 
 def _allowed_image_file(filename):
     """
@@ -48,6 +55,13 @@ def _allowed_video_file(filename):
 
 @app.route('/')
 def home():
+    """
+    메인 페이지
+
+    Returns:
+        메인 페이지 HTML
+    """
+
     return """<!DOCTYPE html>
 <html lang="ko">
     <head>
@@ -103,30 +117,6 @@ def home():
     </body>
 </html>"""
 
-@app.route('/image/mosaic', methods=['GET'])
-def image_mosaic_get():
-    """
-    입력된 이미지 파일의 이름을 입력 폴더에서 찾아 변환 후 출력 폴더에 저장
-
-    Returns:
-        변환 성공 여부.
-    """
-    image_name = request.args['image']
-
-    if not _allowed_image_file(image_name):
-        return 'false'
-
-    try:
-        image = cv2.imread(f'{INPUT_PATH}/images/{image_name}')
-    except:
-        return 'false'
-
-    detections = f.image_to_detections(image)
-    image = mosaic_image(image, detections[0])
-    cv2.imwrite(f'{OUTPUT_PATH}/images/{EDIT_PREFIX}_{image_name}', image)
-
-    return 'true'
-
 @app.route('/image/mosaic', methods=['POST'])
 def image_mosaic_post():
     """
@@ -146,7 +136,6 @@ def image_mosaic_post():
     if not _allowed_image_file(file.filename):
         return 'false'
 
-    filename = secure_filename(file.filename)
     file_bytes = np.fromfile(file, np.uint8)
     image = cv2.imdecode(file_bytes, cv2.IMREAD_UNCHANGED)
 
@@ -157,33 +146,6 @@ def image_mosaic_post():
     response.headers.set('Content-Type', 'image/png')
 
     return response
-
-@app.route('/video/mosaic', methods=['GET'])
-def video_mosaic_get():
-    """
-    입력된 동영상 파일의 이름을 입력 폴더에서 찾아 변환 후 출력 폴더에 저장
-
-    Returns:
-        변환 성공 여부.
-    """
-
-    video_name = request.args['video']
-
-    if not _allowed_video_file(video_name):
-        return 'false'
-
-    try:
-        video = cv2.VideoCapture(f'{INPUT_PATH}/videos/{video_name}')
-    except:
-        return 'false'
-
-    images = video_to_images(video)
-
-    detections = f.image_to_detections(images)
-    images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
-    save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{video_name}', get_fps(video))
-
-    return 'true'
 
 @app.route('/video/mosaic', methods=['POST'])
 def video_mosaic_post():
@@ -216,8 +178,13 @@ def video_mosaic_post():
 
     return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='video/mp4')
 
-if __name__ == '__main__':
+def main():
     print_config()
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    ssl_context.load_cert_chain(certfile='', keyfile='')
+
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain(certfile=SSL_CERT, keyfile=SSL_KEY)
+
     app.run(host=IP, port=PORT, ssl_context=ssl_context)
+
+if __name__ == '__main__':
+    main()
