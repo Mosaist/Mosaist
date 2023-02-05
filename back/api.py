@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from facial_stuffs import *
 from image_stuffs import *
 from video_stuffs import *
+from model_stuffs import *
 
 from config import *
 
@@ -177,6 +178,48 @@ def video_mosaic_post():
     save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', get_fps(video))
 
     return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='video/mp4')
+
+@app.route('/video/training', methods=['POST'])
+def video_training_post():
+    """
+    입력된 동영상 파일을 사진으로 변환하여 학습
+
+    Returns:
+        학습 성공 여부.
+    """
+
+    if 'file' not in request.files:
+        return 'false'
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'false'
+
+    if not _allowed_video_file(file.filename):
+        return 'false'
+
+    filename = secure_filename(file.filename)
+    file.save(f'{INPUT_PATH}/videos/{filename}')
+
+    dataset_prefix = 'custom_'
+    dataset_index = 0
+    while os.path.exists(f'{DATASET_PATH}/{dataset_prefix}{dataset_index}'):
+        dataset_index += 1
+
+    dataset_name = f'{dataset_prefix}{dataset_index}'
+
+    print(f'[Custom Model Training]: {dataset_name}')
+
+    try:
+        video_to_dataset(f'{filename}', dataset_name)
+        train_images(dataset_name)
+
+        f.set_model(f'{MODEL_PATH}/{dataset_name}/weights/best.pt')
+    except Exception:
+        print(Exception)
+        return 'false'
+
+    return 'true'
 
 def main():
     print_config()

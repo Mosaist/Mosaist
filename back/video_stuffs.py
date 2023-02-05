@@ -106,14 +106,14 @@ def _init_dataset(dataset_path: str):
         dataset_path: 대상 데이터셋 경로.
     """
 
-    image_path = dataset_path + 'images/'
+    image_path = f'{dataset_path}/images'
 
     if not os.path.exists(dataset_path):
         raise ValueError(f'Path not exist: {dataset_path}')
     if not os.path.exists(image_path):
         raise ValueError(f'Path not exist: {image_path}')
 
-    label_path = dataset_path + 'labels/'
+    label_path = f'{dataset_path}/labels'
 
     if not os.path.exists(label_path):
         os.mkdir(label_path)
@@ -121,12 +121,12 @@ def _init_dataset(dataset_path: str):
     image_names = os.listdir(image_path)
 
     for image_name in image_names:
-        label_file = open(label_path + image_name.split('.')[0] + '.txt', 'w')
+        label_file = open(label_path + '/' + image_name.split('.')[0] + '.txt', 'w')
         label_file.write('0 0.5 0.5 1 1')
         label_file.close()
 
-    data_info_path = f'{YOLO_PATH}/data'
-    data_info_file = open(data_info_path + dataset_path.split('/')[-1] + '.yaml', 'w')
+    data_info_path = f'{YOLO_PATH}/data/'
+    data_info_file = open(data_info_path + '/' + dataset_path.split('/')[-1] + '.yaml', 'w')
     data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
 
 def _get_yaml(dataset_path: str, image_path: str, val_path: str) -> str:
