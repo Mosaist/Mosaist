@@ -2,7 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8" />
-        <title>/video/mosaic</title>
+        <title>/image/mosaic</title>
         <style type="text/css">
             h1 { text-align: center; }
             h3 { text-align: center; }
@@ -21,15 +21,15 @@
     </head>
     <body>
         <header>
-            <h1>/video/mosaic</h1>
+            <h1>/image/mosaic</h1>
         </header>
         <hr>
         <main class="center">
             <div id="app"></div>
 
             <form id="upload">
-                <label for="file"><h3>Upload video file</h3></label>
-                <input type="file" id="file" accept=".mp4">
+                <label for="file"><h3>Upload image file</h3></label>
+                <input type="file" id="file" accept=".jpeg, .jpg, .png">
                 <button>Upload</button>
             </form>
         </main>
@@ -45,11 +45,10 @@
 
             function logFile (event) {
                 let str = event.target.result;
-                let vid = document.createElement('video');
-                vid.className = 'result';
-                vid.controls = true;
-                vid.src = str;
-                app.append(vid);
+                let img = document.createElement('img');
+                img.className = 'result';
+                img.src = str;
+                app.append(img);
             }
 
             async function handleSubmit (event) {
@@ -70,7 +69,7 @@
                 let formData = new FormData();
                 formData.append('file', file.files[0]);
 
-                let res = await fetch('https://kut.unta.io:8080/video/mosaic', {
+                let res = await fetch('https://temp.unta.io:10083/back/image/mosaic', {
                     method: 'POST',
                     body: formData
                 });

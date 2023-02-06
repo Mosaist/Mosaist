@@ -57,8 +57,8 @@
             <div class="photo">
                 <img src="images/test_9_mosaic.jpg" alt="">
             </div>-->
-            <h3><a href="./imageMosaic.html">Image Mosaic</a></h3>
-            <h3><a href="./videoMosaic.html">Video Mosaic</a></h3>
+            <h3><a href="https://temp.unta.io:10083/front/imageMosaic.html">Image Mosaic</a></h3>
+            <h3><a href="https://temp.unta.io:10083/front/videoMosaic.html">Video Mosaic</a></h3>
             
             <div class="video">
                 <!--<video  src="download.mp4"  controls>test</video>-->
@@ -67,8 +67,8 @@
                   </video>
             </div>
            
-            <h3><a href="./realTimeMosaic.html">Real-Time Mosaic</a></h3>
-            <h3><a href="./customModelTraining.html">Custom Model Training</a></h3>
+            <h3><a href="https://temp.unta.io:10083/front/realTimeMosaic.html">Real-Time Mosaic</a></h3>
+            <h3><a href="https://temp.unta.io:10083/front/customModelTraining.html">Custom Model Training</a></h3>
         </main>
         <hr>
         <footer>
@@ -80,7 +80,7 @@
 
             status.innerHTML = '<i>Checking Service Status</i>';
 
-            fetch('https://kut.unta.io:8080')
+            fetch('https://temp.unta.io:10083/back')
             .then(() => {
                 status.innerHTML = '<i>Service Available</i>';
                 status.style.color = 'green';

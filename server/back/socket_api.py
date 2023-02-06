@@ -1,3 +1,4 @@
+import json
 import base64
 import datetime
 
@@ -11,7 +12,7 @@ from facial_stuffs import *
 from image_stuffs import *
 from video_stuffs import *
 
-from config import *
+config = json.load(open(f'../../config.json'))
 
 f = FaceRecognizer()
 """
@@ -64,12 +65,7 @@ def socket_mosaic_image(content):
     return cv2.imencode('.png', image)[1].tobytes()
 
 async def main():
-    print_config()
-
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain(certfile=SSL_CERT, keyfile=SSL_KEY)
-
-    async with websockets.serve(socket_root, IP, SOCKET_PORT, ssl=ssl_context, max_size=10000000):
+    async with websockets.serve(socket_root, '127.0.0.1', config['server']['back']['socketPort'], max_size=10000000):
         await asyncio.Future()
 
 if __name__ == '__main__':

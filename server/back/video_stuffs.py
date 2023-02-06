@@ -1,8 +1,9 @@
 import os
+import json
 import cv2
 import numpy as np
 
-from config import *
+config = json.load(open(f'../../config.json'))
 
 def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
     """
@@ -80,10 +81,10 @@ def video_to_dataset(video_name: str, dataset_name: str):
         dataset_name: 변환 후 데이터셋의 이름.
     """
 
-    video = cv2.VideoCapture(f'{INPUT_PATH}/videos/{video_name}')
+    video = cv2.VideoCapture(f'{config["path"]["inputPath"]}/videos/{video_name}')
     images = video_to_images(video)
 
-    dataset_path = f'{DATASET_PATH}/{dataset_name}'
+    dataset_path = f'{config["path"]["datasetPath"]}/{dataset_name}'
     if not os.path.exists(dataset_path):
         os.makedirs(dataset_path)
 
@@ -125,7 +126,7 @@ def _init_dataset(dataset_path: str):
         label_file.write('0 0.5 0.5 1 1')
         label_file.close()
 
-    data_info_path = f'{YOLO_PATH}/data/'
+    data_info_path = f'{config["path"]["yoloPath"]}/data/'
     data_info_file = open(data_info_path + '/' + dataset_path.split('/')[-1] + '.yaml', 'w')
     data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
 

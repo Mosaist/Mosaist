@@ -1,6 +1,8 @@
+import os
+import json
+
 import cv2
 import numpy as np
-import ssl
 
 from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
@@ -11,13 +13,13 @@ from image_stuffs import *
 from video_stuffs import *
 from model_stuffs import *
 
-from config import *
+config = json.load(open(f'../../config.json'))
 
 app = Flask(__name__)
 """
 플라스크 HTTP 서버 인스턴스
 """
-app.config['UPLOAD_FOLDER'] = INPUT_PATH
+app.config['UPLOAD_FOLDER'] = config['path']['inputPath']
 
 CORS(app)
 
@@ -38,7 +40,7 @@ def _allowed_image_file(filename):
 
     """
 
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_IMAGE_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in config['server']['back']['allowedImageExtensions']
 
 def _allowed_video_file(filename):
     """
@@ -52,7 +54,7 @@ def _allowed_video_file(filename):
 
     """
 
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_VIDEO_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in config['server']['back']['allowedVideoExtensions']
 
 @app.route('/')
 def home():
@@ -168,16 +170,16 @@ def video_mosaic_post():
         return 'false'
 
     filename = secure_filename(file.filename)
-    file.save(f'{INPUT_PATH}/videos/{filename}')
+    file.save(f'{config["path"]["inputPath"]}/videos/{filename}')
 
-    video = cv2.VideoCapture(str(f'{INPUT_PATH}/videos/{filename}'))
+    video = cv2.VideoCapture(str(f'{config["path"]["inputPath"]}/videos/{filename}'))
     images = video_to_images(video)
 
     detections = f.image_to_detections(images)
     images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
-    save_images_as_video(images, f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', get_fps(video))
+    save_images_as_video(images, f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', get_fps(video))
 
-    return send_file(f'{OUTPUT_PATH}/videos/{EDIT_PREFIX}_{filename}', mimetype='video/mp4')
+    return send_file(f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', mimetype='video/mp4')
 
 @app.route('/video/training', methods=['POST'])
 def video_training_post():
@@ -199,11 +201,11 @@ def video_training_post():
         return 'false'
 
     filename = secure_filename(file.filename)
-    file.save(f'{INPUT_PATH}/videos/{filename}')
+    file.save(f'{config["path"]["inputPath"]}/videos/{filename}')
 
     dataset_prefix = 'custom_'
     dataset_index = 0
-    while os.path.exists(f'{DATASET_PATH}/{dataset_prefix}{dataset_index}'):
+    while os.path.exists(f'{config["path"]["datasetPath"]}/{dataset_prefix}{dataset_index}'):
         dataset_index += 1
 
     dataset_name = f'{dataset_prefix}{dataset_index}'
@@ -214,7 +216,7 @@ def video_training_post():
         video_to_dataset(f'{filename}', dataset_name)
         train_images(dataset_name)
 
-        f.set_model(f'{MODEL_PATH}/{dataset_name}/weights/best.pt')
+        f.set_model(f'{config["path"]["modelPath"]}/{dataset_name}/weights/best.pt')
     except Exception:
         print(Exception)
         return 'false'
@@ -222,12 +224,7 @@ def video_training_post():
     return 'true'
 
 def main():
-    print_config()
-
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain(certfile=SSL_CERT, keyfile=SSL_KEY)
-
-    app.run(host=IP, port=PORT, ssl_context=ssl_context)
+    app.run(host='127.0.0.1', port=config['server']['back']['httpPort'])
 
 if __name__ == '__main__':
     main()

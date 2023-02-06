@@ -1,6 +1,7 @@
 import os
+import json
 
-from config import *
+config = json.load(open(f'../../config.json'))
 
 def train_images(dataset_name: str):
     """
@@ -16,4 +17,4 @@ def train_images(dataset_name: str):
     num_epochs = 5
     num_batch = 4
 
-    os.system(f'python {YOLO_PATH}/train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')
+    os.system(f'python {config["path"]["yoloPath"]}/train.py --data {dataset_name}.yaml --epochs {num_epochs} --weights yolov5n.pt --batch-size {num_batch} --name {dataset_name}')

@@ -1,6 +1,7 @@
+import json
 import torch
 
-from config import *
+config = json.load(open(f'../../config.json'))
 
 class FaceRecognizer:
     """
@@ -9,8 +10,8 @@ class FaceRecognizer:
     """
 
     default_model_paths: dict = {
-        'widerface': f'{MODEL_PATH}/widerface-yolov5n/weights/best.pt',
-        'coco128': f'{MODEL_PATH}/coco128-yolov5n/weights/best.pt'
+        'widerface': f'{config["path"]["modelPath"]}/widerface-yolov5n/weights/best.pt',
+        'coco128': f'{config["path"]["modelPath"]}/coco128-yolov5n/weights/best.pt'
     }
     """
     widerface와 coco128에 대한 기본 모델 경로.

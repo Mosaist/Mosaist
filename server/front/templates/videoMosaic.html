@@ -2,7 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8" />
-        <title>/video/training</title>
+        <title>/video/mosaic</title>
         <style type="text/css">
             h1 { text-align: center; }
             h3 { text-align: center; }
@@ -21,7 +21,7 @@
     </head>
     <body>
         <header>
-            <h1>/video/training</h1>
+            <h1>/video/mosaic</h1>
         </header>
         <hr>
         <main class="center">
@@ -70,14 +70,12 @@
                 let formData = new FormData();
                 formData.append('file', file.files[0]);
 
-                let res = await fetch('https://kut.unta.io:8080/video/training', {
+                let res = await fetch('https://temp.unta.io:10083/back/video/mosaic', {
                     method: 'POST',
                     body: formData
                 });
 
-                console.log(res)
-
-                // reader.readAsDataURL(await res.blob());
+                reader.readAsDataURL(await res.blob());
             }
 
             form.addEventListener('submit', handleSubmit);
