@@ -1,5 +1,5 @@
 # **Front-Test**
-[Front-Test](https://mosaist.github.io/Mosaist/front/templates/index.html)
+[Front-Test](https://mosaist.github.io/Mosaist/front/templates/html/index.html)
 
 # **FYI**
 ## **주요 디렉토리 및 파일.**
