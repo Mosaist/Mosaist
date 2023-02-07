@@ -26,23 +26,23 @@ def _proxy(p, q):
 
 @app.route('/')
 def root():
-    return _proxy(config['server']['domain'], f"http://localhost:{config['server']['front']['port']}")
+    return _proxy(config['server']['url'], f"http://localhost:{config['server']['front']['port']}")
 
 @app.route('/front')
 def front_root():
-    return _proxy(config['server']['front']['domain'], f"http://localhost:{config['server']['front']['port']}")
+    return _proxy(config['server']['front']['url'], f"http://localhost:{config['server']['front']['port']}")
 
 @app.route('/front/<path:path>')
 def front(path):
-    return _proxy(config['server']['front']['domain'], f"http://localhost:{config['server']['front']['port']}")
+    return _proxy(config['server']['front']['url'], f"http://localhost:{config['server']['front']['port']}")
 
 @app.route('/back')
 def back_root():
-    return _proxy(config['server']['back']['domain'], f"http://localhost:{config['server']['back']['httpPort']}")
+    return _proxy(config['server']['back']['url'], f"http://localhost:{config['server']['back']['httpPort']}")
 
 @app.route('/back/<path:path>', methods=['POST'])
 def back(path):
-    return _proxy(config['server']['back']['domain'], f"http://localhost:{config['server']['back']['httpPort']}")
+    return _proxy(config['server']['back']['url'], f"http://localhost:{config['server']['back']['httpPort']}")
 
 def main():
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

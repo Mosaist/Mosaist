@@ -8,19 +8,19 @@
     },
 
     "server": {
-        "domain": "",
+        "url": "",
         "ip": "",
         "port": 0,
         "sslCert": "",
         "sslKey": "",
 
         "front": {
-            "domain": "",
+            "url": "",
             "port": 0
         },
 
         "back": {
-            "domain": "",
+            "url": "",
             "httpPort": 0,
             "socketPort": 0,
             "allowedImageExtensions": [],

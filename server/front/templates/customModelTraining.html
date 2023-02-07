@@ -70,7 +70,7 @@
                 let formData = new FormData();
                 formData.append('file', file.files[0]);
 
-                let res = await fetch('https://temp.unta.io:10083/back/video/training', {
+                let res = await fetch('{{ config.server.back.url }}/video/training', {
                     method: 'POST',
                     body: formData
                 });

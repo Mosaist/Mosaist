@@ -69,7 +69,7 @@
                 let formData = new FormData();
                 formData.append('file', file.files[0]);
 
-                let res = await fetch('https://temp.unta.io:10083/back/image/mosaic', {
+                let res = await fetch('{{ config.server.back.url }}/image/mosaic', {
                     method: 'POST',
                     body: formData
                 });
