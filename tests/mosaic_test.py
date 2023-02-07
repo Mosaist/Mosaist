@@ -4,7 +4,7 @@ import os
 import sys
 import cv2
 
-sys.path.append('../image_handling')
+sys.path.append('../server/back')
 from facial_stuffs import *
 from image_stuffs import *
 

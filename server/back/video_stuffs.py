@@ -3,6 +3,8 @@ import json
 import cv2
 import numpy as np
 
+from facial_stuffs import FaceRecognizer
+
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
@@ -69,16 +71,17 @@ def get_fps(video: cv2.VideoCapture) -> float:
     else :
         return video.get(cv2.CAP_PROP_FPS)
 
-def video_to_dataset(video_name: str, dataset_name: str):
+def video_to_dataset(video_name: str, dataset_name: str, fr: FaceRecognizer, log: bool=False):
     """
     동영상을 데이터셋으로 변환
     inputs/videos의 특정 동영상을 데이터셋으로 변환.
-    라벨은 동영상 크기 전체를 포괄하는 영역으로 설정.
-    (0 0.5 0.5 1 1)
+    라벨은 얼굴의 경우, 기존에 학습된 모델을 활용.
 
     Params:
         video_name: 데이터셋으로 변환코자 하는 동영상 이름. (확장자 포함)
         dataset_name: 변환 후 데이터셋의 이름.
+        fr: 얼굴 인식을 위한 사전 학습된 모델.
+        log: 콘솔 로깅 여부.
     """
 
     video = cv2.VideoCapture(f'{config["path"]["inputPath"]}/videos/{video_name}')
@@ -89,42 +92,28 @@ def video_to_dataset(video_name: str, dataset_name: str):
         os.makedirs(dataset_path)
 
     image_path = f'{dataset_path}/images/'
+    label_path = f'{dataset_path}/labels/'
+
     if not os.path.exists(image_path):
         os.makedirs(image_path)
-
-    for i, image in enumerate(images):
-        cv2.imwrite(image_path + str(i) + '.png', image)
-
-    _init_dataset(dataset_path)
-
-def _init_dataset(dataset_path: str):
-    """
-    *내부 함수
-
-    이미지 묶음으로 변환된 동영상 프레임에 라벨 부여.
-
-    Params:
-        dataset_path: 대상 데이터셋 경로.
-    """
-
-    image_path = f'{dataset_path}/images'
-
-    if not os.path.exists(dataset_path):
-        raise ValueError(f'Path not exist: {dataset_path}')
-    if not os.path.exists(image_path):
-        raise ValueError(f'Path not exist: {image_path}')
-
-    label_path = f'{dataset_path}/labels'
-
     if not os.path.exists(label_path):
         os.mkdir(label_path)
 
-    image_names = os.listdir(image_path)
+    for i, image in enumerate(images):
+        if log:
+            print(f'[Video to Dataset]: {dataset_name} | {i} / {len(images) - 1}')
 
-    for image_name in image_names:
-        label_file = open(label_path + '/' + image_name.split('.')[0] + '.txt', 'w')
-        label_file.write('0 0.5 0.5 1 1')
-        label_file.close()
+        img_path = f'{image_path}/{i}.png'
+        lbl_path = f'{label_path}/{i}.txt'
+
+        labels = [
+            ' '.join(map(str, label))
+            for label in fr.image_to_labels([image])[0]
+        ]
+
+        cv2.imwrite(img_path, image)
+        with open(lbl_path, 'w') as f:
+            f.write('\n'.join(labels))
 
     data_info_path = f'{config["path"]["yoloPath"]}/data/'
     data_info_file = open(data_info_path + '/' + dataset_path.split('/')[-1] + '.yaml', 'w')

@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 
 import cv2
 import ssl
@@ -214,12 +215,17 @@ def video_training_post():
     print(f'[Custom Model Training]: {dataset_name}')
 
     try:
-        video_to_dataset(f'{filename}', dataset_name)
+        print('[Custom Model Training]: Convert video into dataset.')
+        video_to_dataset(f'{filename}', dataset_name, f, True)
+
+        print('[Custom Model Training]: Train model.')
         train_images(dataset_name)
 
+        print('[Custom Model Training]: Set model.')
         f.set_model(f'{config["path"]["modelPath"]}/{dataset_name}/weights/best.pt')
     except Exception:
-        print(Exception)
+        print('[Custom Model Training]: An exception has occured.')
+        print(traceback.format_exc())
         return 'false'
 
     return 'true'
