@@ -1,7 +1,7 @@
 import os
 import json
 
-config = json.load(open(f'../../config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 def train_images(dataset_name: str):
     """
