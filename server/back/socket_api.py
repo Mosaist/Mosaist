@@ -4,8 +4,8 @@ import datetime
 
 import asyncio
 import cv2
-import numpy as np
 import ssl
+import numpy as np
 import websockets
 
 from facial_stuffs import *
@@ -65,7 +65,12 @@ def socket_mosaic_image(content):
     return cv2.imencode('.png', image)[1].tobytes()
 
 async def main():
-    async with websockets.serve(socket_root, '127.0.0.1', config['server']['back']['socketPort'], max_size=10000000):
+    print(f' * Running on wss://{config["server"]["ip"]}:{config["server"]["back"]["socketPort"]}')
+
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain(certfile=config['server']['sslCert'], keyfile=config['server']['sslKey'])
+
+    async with websockets.serve(socket_root, config['server']['ip'], config['server']['back']['socketPort'], ssl=ssl_context, max_size=10000000):
         await asyncio.Future()
 
 if __name__ == '__main__':

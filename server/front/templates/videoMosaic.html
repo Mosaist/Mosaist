@@ -70,7 +70,7 @@
                 let formData = new FormData();
                 formData.append('file', file.files[0]);
 
-                let res = await fetch('{{ config.server.back.url }}/video/mosaic', {
+                let res = await fetch('{{ config.server.back.httpUrl }}/video/mosaic', {
                     method: 'POST',
                     body: formData
                 });

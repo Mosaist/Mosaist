@@ -2,6 +2,7 @@ import os
 import json
 
 import cv2
+import ssl
 import numpy as np
 
 from flask import Flask, request, send_file, make_response
@@ -224,7 +225,13 @@ def video_training_post():
     return 'true'
 
 def main():
-    app.run(host='127.0.0.1', port=config['server']['back']['httpPort'])
+    if config['server']['useProxy']:
+        app.run(host='127.0.0.1', port=config['server']['back']['httpPort'])
+    else:
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ssl_context.load_cert_chain(certfile=config['server']['sslCert'], keyfile=config['server']['sslKey'])
+
+        app.run(host=config['server']['ip'], port=config['server']['back']['httpPort'], ssl_context=ssl_context)
 
 if __name__ == '__main__':
     main()

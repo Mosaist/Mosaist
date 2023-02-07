@@ -42,7 +42,7 @@
             status.innerHTML = '<i>Disconnected</i>';
             status.style.color = 'red';
 
-            const socketURL = 'wss://kut.unta.io:8081'
+            const socketURL = '{{ config.server.back.socketUrl }}'
             const socket = new WebSocket(socketURL);
 
             socket.addEventListener('open', (event) => {

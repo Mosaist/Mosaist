@@ -80,7 +80,7 @@
 
             status.innerHTML = '<i>Checking Service Status</i>';
 
-            fetch('{{ config.server.back.url }}')
+            fetch('{{ config.server.back.httpUrl }}')
             .then(() => {
                 status.innerHTML = '<i>Service Available</i>';
                 status.style.color = 'green';
@@ -94,7 +94,7 @@
             socketStatus.innerHTML = '<i>Disconnected</i>';
             socketStatus.style.color = 'red';
 
-            const socketURL = 'wss://kut.unta.io:8081'
+            const socketURL = '{{ config.server.back.socketUrl }}'
             const socket = new WebSocket(socketURL);
 
             socket.addEventListener('open', (event) => {

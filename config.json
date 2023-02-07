@@ -13,6 +13,7 @@
         "port": 0,
         "sslCert": "",
         "sslKey": "",
+        "useProxy": false,
 
         "front": {
             "url": "",
@@ -20,7 +21,8 @@
         },
 
         "back": {
-            "url": "",
+            "httpUrl": "",
+            "socketUrl": "",
             "httpPort": 0,
             "socketPort": 0,
             "allowedImageExtensions": [],

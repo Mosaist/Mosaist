@@ -38,11 +38,11 @@ def front(path):
 
 @app.route('/back')
 def back_root():
-    return _proxy(config['server']['back']['url'], f"http://localhost:{config['server']['back']['httpPort']}")
+    return _proxy(config['server']['back']['httpUrl'], f"http://localhost:{config['server']['back']['httpPort']}")
 
 @app.route('/back/<path:path>', methods=['POST'])
 def back(path):
-    return _proxy(config['server']['back']['url'], f"http://localhost:{config['server']['back']['httpPort']}")
+    return _proxy(config['server']['back']['httpUrl'], f"http://localhost:{config['server']['back']['httpPort']}")
 
 def main():
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
