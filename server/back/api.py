@@ -14,7 +14,7 @@ from image_stuffs import *
 from video_stuffs import *
 from model_stuffs import *
 
-config = json.load(open(f'../../config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 app = Flask(__name__)
 """

@@ -1,8 +1,9 @@
+import os
 import ssl
 import json
 from flask import Flask, render_template, send_file
 
-config = json.load(open(f'../../config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 app = Flask(__name__)
 

@@ -3,7 +3,7 @@ import json
 import cv2
 import numpy as np
 
-config = json.load(open(f'../../config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
     """

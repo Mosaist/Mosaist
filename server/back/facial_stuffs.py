@@ -1,7 +1,8 @@
+import os
 import json
 import torch
 
-config = json.load(open(f'../../config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 
 class FaceRecognizer:
     """
