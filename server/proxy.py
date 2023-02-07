@@ -5,7 +5,7 @@ import requests
 from flask import Flask, request, Response
 
 app = Flask(__name__)
-config = json.load(open(f'{os.path.dirname(__file__)}/..config.json'))
+config = json.load(open(f'{os.path.dirname(__file__)}/../config.json'))
 
 def _proxy(p, q):
     resp = requests.request(
