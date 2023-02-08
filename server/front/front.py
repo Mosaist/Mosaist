@@ -9,15 +9,15 @@ app = Flask(__name__)
 
 @app.route('/')
 def root():
-    return render_template('index.html', config=config)
+    return render_template('html/index.html', config=config)
 
-@app.route('/<url>')
-def template(url):
-    return render_template(url, config=config)
+@app.route('/<path:path>')
+def template(path):
+    return render_template(f'html/{path}', config=config)
 
-@app.route('/resource/<url>')
-def resource(url):
-    return send_file(f'resources/{url}')
+@app.route('/resource/<path:path>')
+def resource(path):
+    return send_file(f'templates/assets/{path}')
 
 if __name__ == '__main__':
     if config['server']['useProxy']:
