@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <meta name="copyright" content="MACode ID, https://macodeid.com">
+
+  <title>Mosaist</title>
+
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/vendor/animate/animate.css">
+
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/bootstrap.css">
+
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/maicons.css">
+
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/vendor/owl-carousel/css/owl.carousel.css">
+
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
+
+  <style>
+    .center {
+        display: grid;
+        place-items: center;
+    }
+
+    #out {
+        width: 640px;
+        height: 480px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back to top button -->
+  <div class="back-to-top"></div>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+      <div class="container">
+        <a href="{{ config.server.front.url }}/index.html" class="navbar-brand"><span class="text-primary">Mosaist.</span></a>
+
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse" id="navbarContent">
+          <ul class="navbar-nav ml-lg-4 pt-3 pt-lg-0">
+            <li class="nav-item active">
+              <a href="{{ config.server.front.url }}/index.html" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ config.server.front.url }}/intro.html" class="nav-link">Introduction</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ config.server.front.url }}/mosaic.html" class="nav-link">Mosaic</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ config.server.front.url }}/about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ config.server.front.url }}/contact.html" class="nav-link">Contact</a>
+            </li>
+          </ul>
+
+          <div class="ml-auto">
+            <a href="#" class="btn btn-outline rounded-pill">Login</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+  <main class="center">
+    <div class="page-section features">
+        <div class="page-section">
+          <div class="container">
+            <div class="text-center wow fadeInUp">
+              <h2 class="title-section"><span class="marked">Real-Time</span> Mosaic</h2>
+              <div class="divider mx-auto"></div>
+              <div>
+                <video autoplay="true" id="cam"></video>
+                <img id="out" />
+                <canvas id="temp" hidden="true"></canvas>
+            </div>
+            </div>
+          </div>
+        </div> <!-- .container -->
+      </div> <!-- .page-section -->
+    </div> <!-- .page-section --> 
+    <p id="copyright" style="text-align: center; padding: 10px;">&copy; 2023 <a href="https://github.com/Mosaist/Mosaist">Mosaist</a>.</p>
+  </main>
+
+  <script>
+    const socketURL = '{{ config.server.back.socketUrl }}'
+    const socket = new WebSocket(socketURL);
+
+    socket.addEventListener('open', (event) => {
+      console.log(`Socket ${socketURL} has been connected.`);
+
+      status.innerHTML = '<i>Connected</i>';
+      status.style.color = 'green';
+    })
+
+    socket.addEventListener('error', (event) => {
+      console.log(`An error has occured during ${socketURL} socker connection.`);
+
+      status.innerHTML = '<i>Disconnected</i>';
+      status.style.color = 'red';
+    })
+
+    socket.addEventListener('close', (event) => {
+      console.log(`Socket ${socketURL} has been disconnected.`);
+
+      status.innerHTML = '<i>Disconnected</i>';
+      status.style.color = 'red';
+    })
+
+    socket.addEventListener('message', (event) => {
+      const image = URL.createObjectURL(new Blob([event.data]));
+      out.src = image;
+    });
+
+    const fps = 10;
+    const timeStep = 1000 / fps;
+
+    const video = document.querySelector("#cam");
+    const out = document.querySelector("#out");
+    const canvas = document.querySelector("#temp");
+    const canvasOut = canvas.getContext('2d');
+
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+
+          setInterval(async () => {
+            canvasOut.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const str = canvas.toDataURL();
+
+            socket.send(`image-mosaic::${str.split(',')[1]}`);
+          }, timeStep);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+  </script> 
+
+  <script src="{{ config.server.front.url }}/resource/js/jquery-3.5.1.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/js/bootstrap.bundle.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/vendor/wow/wow.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/vendor/owl-carousel/js/owl.carousel.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/vendor/waypoints/jquery.waypoints.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/vendor/animateNumber/jquery.animateNumber.min.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/js/google-maps.js"></script>
+
+  <script src="{{ config.server.front.url }}/resource/js/theme.js"></script>
+
+
+</body>
+</html>

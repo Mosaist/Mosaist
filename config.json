@@ -1,20 +1,33 @@
 {
     "path": {
-        "yoloPath": "yolov5",
-        "modelPath": "yolov5/runs/train",
-        "datasetPath": "datasets",
-        "inputPath": "inputs",
-        "outputPath": "outputs"
+        "yoloPath": "",
+        "modelPath": "",
+        "datasetPath": "",
+        "inputPath": "",
+        "outputPath": ""
     },
 
-    "back": {
-        "allowedImageExtensions": ["jpg", "png", "jpeg"],
-        "allowedVideoExtensions": ["mp4"],
-        "editPrefix": "edited",
-        "ip": "0.0.0.0",
-        "port": 8080,
-        "socketPort": 8081,
+    "server": {
+        "url": "",
+        "ip": "",
+        "port": 0,
         "sslCert": "",
-        "sslKey": ""
+        "sslKey": "",
+        "useProxy": false,
+
+        "front": {
+            "url": "",
+            "port": 0
+        },
+
+        "back": {
+            "httpUrl": "",
+            "socketUrl": "",
+            "httpPort": 0,
+            "socketPort": 0,
+            "allowedImageExtensions": [],
+            "allowedVideoExtensions": [],
+            "editPrefix": ""
+        }
     }
 }
