@@ -6,6 +6,9 @@ import numpy as np
 from facial_stuffs import FaceRecognizer
 
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
+"""
+전역 환경 변수 모음
+"""
 
 def video_to_images(video: cv2.VideoCapture) -> np.ndarray:
     """

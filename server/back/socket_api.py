@@ -13,6 +13,9 @@ from image_stuffs import *
 from video_stuffs import *
 
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
+"""
+전역 환경 변수 모음
+"""
 
 f = FaceRecognizer()
 """

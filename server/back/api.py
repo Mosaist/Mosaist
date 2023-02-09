@@ -16,12 +16,18 @@ from video_stuffs import *
 from model_stuffs import *
 
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
+"""
+전역 환경 변수 모음
+"""
 
 app = Flask(__name__)
 """
 플라스크 HTTP 서버 인스턴스
 """
 app.config['UPLOAD_FOLDER'] = config['path']['inputPath']
+"""
+입력 파일에 대한 경로 설정
+"""
 
 CORS(app)
 
