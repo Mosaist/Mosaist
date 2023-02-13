@@ -24,6 +24,10 @@ def root():
 
     return render_template('html/index.html', config=config)
 
+@app.route('/favicon.ico')
+def favicon():
+    print('hi')
+
 @app.route('/<path:path>')
 def template(path):
     """
