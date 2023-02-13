@@ -26,7 +26,7 @@ def root():
 
 @app.route('/favicon.ico')
 def favicon():
-    print('hi')
+    return send_file(f'templates/assets/img/logo/favicon.ico')
 
 @app.route('/<path:path>')
 def template(path):
