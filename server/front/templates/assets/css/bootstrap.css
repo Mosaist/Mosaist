@@ -10197,6 +10197,18 @@ a.text-dark:hover, a.text-dark:focus {
   visibility: hidden !important;
 }
 
+.result {
+  width: 800px;
+  margin: 20px;
+}
+
+p,
+h1,
+h2,
+h3 {
+  word-break: keep-all;
+}
+
 @media print {
   *,
   *::before,
