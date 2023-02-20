@@ -122,6 +122,31 @@ def video_to_dataset(video_name: str, dataset_name: str, fr: FaceRecognizer, log
     data_info_file = open(data_info_path + '/' + dataset_path.split('/')[-1] + '.yaml', 'w')
     data_info_file.write(_get_yaml(dataset_path, image_path, image_path))
 
+def video_to_targetset(video_name: str, fr: FaceRecognizer, log: bool=False):
+    video = cv2.VideoCapture(f'{config["path"]["inputPath"]}/videos/{video_name}')
+    images = video_to_images(video)
+
+    targetset_path = config["path"]["targetsetPath"]
+    o = list(map(lambda t: int(t.split('.')[0]), os.listdir(targetset_path)))
+    o.sort()
+
+    index = o[-1] if o else 0
+    print(f'index origin: {index}')
+
+    for i, image in enumerate(images):
+        if log:
+            print(f'[Video to targetset]: {i} / {len(images) - 1}')
+
+        detection = fr.image_to_detections([image])[0]
+
+        for det in detection:
+            img_path = f'{targetset_path}/{index}.png'
+            img = image[det['ymin']:det['ymax'], det['xmin']:det['xmax']]
+
+            cv2.imwrite(img_path, img)
+
+            index += 1
+
 def _get_yaml(dataset_path: str, image_path: str, val_path: str) -> str:
     """
     *내부 함수

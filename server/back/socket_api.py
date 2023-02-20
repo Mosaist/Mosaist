@@ -63,7 +63,7 @@ def socket_mosaic_image(content):
     image = cv2.imdecode(encoded_image, cv2.IMREAD_COLOR)
 
     detections = f.image_to_detections(image)
-    image = mosaic_image(image, detections[0])
+    image = mosaic_image(image, detections[0], f)
 
     return cv2.imencode('.png', image)[1].tobytes()
 

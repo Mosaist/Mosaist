@@ -1,5 +1,6 @@
 import os
 import json
+import cv2
 import torch
 
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
@@ -18,6 +19,8 @@ class FaceRecognizer:
     widerface에 대한 기본 모델 경로.
     """
 
+    target_faces = []
+
     def __init__(self, model_path: str=None, use_default: bool=True):
         """
         생성자
@@ -29,8 +32,15 @@ class FaceRecognizer:
 
         self.model = None
 
+        target_list = list(map(lambda t: f'{config["path"]["targetsetPath"]}/{t}', os.listdir(config['path']['targetsetPath'])))
+        self.target_faces = [cv2.imread(target_path) for target_path in target_list]
+        print(f'[FaceRecogniazer] Targetset loaded.')
+
         if use_default:
             self.model = torch.hub.load('ultralytics/yolov5', 'custom', FaceRecognizer.default_model_path)
+            print(f'[FaceRecogniazer] Model init as default model.')
+        else:
+            print(f'[FaceRecogniazer] Model init as custom model.')
 
     def set_model(self, model_path: str):
         """

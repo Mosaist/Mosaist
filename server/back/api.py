@@ -151,7 +151,7 @@ def image_mosaic_post():
     image = cv2.imdecode(file_bytes, cv2.IMREAD_UNCHANGED)
 
     detections = f.image_to_detections(image)
-    image = mosaic_image(image, detections[0])
+    image = mosaic_image(image, detections[0], f)
 
     response = make_response(cv2.imencode('.png', image)[1].tobytes())
     response.headers.set('Content-Type', 'image/png')
@@ -184,7 +184,7 @@ def video_mosaic_post():
     images = video_to_images(video)
 
     detections = f.image_to_detections(images)
-    images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
+    images = [mosaic_image(image, detection, f) for image, detection in zip(images, detections)]
     save_images_as_video(images, f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', get_fps(video))
 
     return send_file(f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', mimetype='video/mp4')
@@ -231,6 +231,31 @@ def video_training_post():
         f.set_model(f'{config["path"]["modelPath"]}/{dataset_name}/weights/best.pt')
     except Exception:
         print('[Custom Model Training]: An exception has occured.')
+        print(traceback.format_exc())
+        return 'false'
+
+    return 'true'
+
+@app.route('/video/targetset', methods=['POST'])
+def video_targetset_post():
+    if 'file' not in request.files:
+        return 'false'
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'false'
+
+    if not _allowed_video_file(file.filename):
+        return 'false'
+
+    filename = secure_filename(file.filename)
+    file.save(f'{config["path"]["inputPath"]}/videos/{filename}')
+
+    try:
+        print('[Custom Targetset]: Convert video into targetset.')
+        video_to_targetset(f'{filename}', f, True)
+    except Exception:
+        print('[Custom Targetset]: An exception has occured.')
         print(traceback.format_exc())
         return 'false'
 
