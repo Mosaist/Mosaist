@@ -461,6 +461,30 @@ a.text-dark:hover, a.text-dark:focus {
   box-shadow: none;
 }
 
+.btn-white {
+  color: black;
+  background-color: white;
+  border-color: transparent;
+}
+
+.btn-white.disabled, .btn-white:disabled {
+  color: black;
+  background-color: white;
+  border-color: transparent;
+}
+
+.btn-white:not(:disabled):not(.disabled):active, .btn-white:not(:disabled):not(.disabled).active,
+.show > .btn-white.dropdown-toggle {
+  color: black;
+  background-color: white;
+  border-color: black;
+}
+
+.btn-white:not(:disabled):not(.disabled):active:focus, .btn-white:not(:disabled):not(.disabled).active:focus,
+.show > .btn-white.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
 .btn-accent {
   color: #fff;
   background-color: #FF3D85;

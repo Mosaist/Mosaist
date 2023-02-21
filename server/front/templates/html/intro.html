@@ -37,10 +37,10 @@
 
         <div class="navbar-collapse collapse" id="navbarContent">
           <ul class="navbar-nav ml-lg-4 pt-3 pt-lg-0">
-            <li class="nav-item active">
+            <li class="nav-item">
               <a href="{{ config.server.front.url }}/index.html" class="nav-link">Home</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
               <a href="{{ config.server.front.url }}/intro.html" class="nav-link">Introduction</a>
             </li>
             <li class="nav-item">
@@ -51,6 +51,9 @@
             </li>
             <li class="nav-item">
               <a href="{{ config.server.front.url }}/contact.html" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ config.server.front.url }}/list.html" class="nav-link">Notice</a>
             </li>
           </ul>
 
@@ -85,8 +88,8 @@
           <div class="col-lg-6 py-3">
             <h2 class="title-section" style="font-size: 40px;"><span class="marked">Mosaist</span> 란?</h2>
             <div class="divider"></div>
-            <p class="mb-5" style="font-size: 25px;"> <br>Mosaist는 범람하는 동영상 콘텐츠 속 초상권 침해 문제를 보다 근본적으로 해결하기 위해 만들어졌습니다. 
-              <br>사진, 동영상 및 실시간 동영상에서 자동으로 얼굴을<br>인식해 모자이크 처리를 도와줍니다. 
+            <p class="mb-5" style="font-size: 25px; word-break: keep-all;"> <br>Mosaist는 범람하는 동영상 콘텐츠 속 초상권 침해 문제를 보다 근본적으로 해결하기 위해 만들어졌습니다. 
+              <br>사진, 동영상 및 실시간 동영상에서 자동으로 얼굴을 인식해 모자이크 처리를 도와줍니다. 
               <br>특정 얼굴을 모자이크 대상에서 제외하거나 등록하는 것 또한 가능합니다. 
               <br>다 같이 시작해 보세요!
             </p>
@@ -166,21 +169,17 @@
           </div>
     
           <div class="row mt-5 text-center">
-            <div class="col-lg-4 py-3" style="max-width: 25%">
+            <div class="col-lg-4 py-3">
               <div class="display-3"><img src="{{ config.server.front.url }}/resource/img/teq/yolov5png.png" style="width:195px; height:70px; margin-top:90px; margin-bottom:38px;"></div>
-              <h5 style="margin-top:23px; margin-bottom:40px;"><a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiTmdrBlfT8AhUcUfUHHY1QBC4QFnoECBAQAQ&url=https%3A%2F%2Fgithub.com%2Fultralytics%2Fyolov5&usg=AOvVaw2eQQgsOOrJBCdPfyhp4iJ_" style="color: black;">코어</a></h5>
+              <h5 style="margin-top:23px; margin-bottom:40px;"><a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiTmdrBlfT8AhUcUfUHHY1QBC4QFnoECBAQAQ&url=https%3A%2F%2Fgithub.com%2Fultralytics%2Fyolov5&usg=AOvVaw2eQQgsOOrJBCdPfyhp4iJ_" style="color: black;">Core</a></h5>
             </div>
-            <div class="col-lg-4 py-3" style="max-width: 25%">
+            <div class="col-lg-4 py-3">
               <div class="display-3"><img src="{{ config.server.front.url }}/resource/img/teq/opencv.png" style="width:100px; height:120px; margin-top:70px; margin-bottom:30px;"></div>
-              <h5 style="margin-bottom:40px;"><a href="https://opencv.org/" style="color: black;">이미지 처리</a></h5>
+              <h5 style="margin-bottom:40px;"><a href="https://opencv.org/" style="color: black;">Image Processing</a></h5>
             </div>
-            <div class="col-lg-4 py-3" style="max-width: 25%">
-              <div class="display-3"><img src="{{ config.server.front.url }}/resource/img/teq/nodejs.png" style="width:120px; height:120px; margin-top:70px; margin-bottom:30px;"></div>
-              <h5 style="margin-bottom:40px;"><a href="https://nodejs.org/en/" style="color: black;">프론트</a></h5>
-            </div>
-            <div class="col-lg-4 py-3" style="max-width: 25%">
+            <div class="col-lg-4 py-3">
               <div class="display-3"><img src="{{ config.server.front.url }}/resource/img/teq/flask.png" style="width:120px; height:120px; margin-top:70px; margin-bottom:30px;"></div>
-              <h5 style="margin-bottom:40px;"><a href="https://flask.palletsprojects.com/en/2.2.x/" style="color: black;">백엔드</a></h5>
+              <h5 style="margin-bottom:40px;"><a href="https://flask.palletsprojects.com/en/2.2.x/" style="color: black;">Front/Back-End</a></h5>
             </div>
           </div>
         </div> <!-- .container -->
