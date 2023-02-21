@@ -64,70 +64,6 @@ def _allowed_video_file(filename):
 
     return '.' in filename and filename.rsplit('.', 1)[1] in config['server']['back']['allowedVideoExtensions']
 
-@app.route('/')
-def home():
-    """
-    메인 페이지
-
-    Returns:
-        메인 페이지 HTML
-    """
-
-    return """<!DOCTYPE html>
-<html lang="ko">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Mosaist</title>
-        <style>
-            h1 { text-align: center; }
-            h4 { text-align: center; }
-            main {
-                width: 800px;
-                margin: 0 auto;
-            }
-
-            .center {
-                display: grid;
-                place-items: center;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Mosaist</h1>
-        </header>
-        <hr>
-        <main>
-            <section>
-                <h3>[POST] /image/mosaic</h3>
-                <div class="center">
-                    <p>
-                        body {<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;"file": "{your_image_file_here}"<br>
-                        }<br>
-                    </p>
-                    <p>.jpg, .png are allowed.</p>
-                </div>
-            </section>
-            <section>
-                <h3>[POST] /video/mosaic</h3>
-                <div class="center">
-                    <p>
-                        body {<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp"file": "{your_video_file_here}"<br>
-                        }<br>
-                    </p>
-                    <p>.mp4 is allowed.</p>
-                </div>
-            </section>
-        </main>
-        <hr>
-        <footer>
-            <h4><a href="https://github.com/Mosaist/Mosaist">github</a></h4>
-        </footer>
-    </body>
-</html>"""
-
 @app.route('/image/mosaic', methods=['POST'])
 def image_mosaic_post():
     """
@@ -151,7 +87,7 @@ def image_mosaic_post():
     image = cv2.imdecode(file_bytes, cv2.IMREAD_UNCHANGED)
 
     detections = f.image_to_detections(image)
-    image = mosaic_image(image, detections[0])
+    image = mosaic_image(image, detections[0], f)
 
     response = make_response(cv2.imencode('.png', image)[1].tobytes())
     response.headers.set('Content-Type', 'image/png')
@@ -184,7 +120,7 @@ def video_mosaic_post():
     images = video_to_images(video)
 
     detections = f.image_to_detections(images)
-    images = [mosaic_image(image, detection) for image, detection in zip(images, detections)]
+    images = [mosaic_image(image, detection, f) for image, detection in zip(images, detections)]
     save_images_as_video(images, f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', get_fps(video))
 
     return send_file(f'{config["path"]["outputPath"]}/videos/{config["server"]["back"]["editPrefix"]}_{filename}', mimetype='video/mp4')
@@ -231,6 +167,31 @@ def video_training_post():
         f.set_model(f'{config["path"]["modelPath"]}/{dataset_name}/weights/best.pt')
     except Exception:
         print('[Custom Model Training]: An exception has occured.')
+        print(traceback.format_exc())
+        return 'false'
+
+    return 'true'
+
+@app.route('/video/targetset', methods=['POST'])
+def video_targetset_post():
+    if 'file' not in request.files:
+        return 'false'
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'false'
+
+    if not _allowed_video_file(file.filename):
+        return 'false'
+
+    filename = secure_filename(file.filename)
+    file.save(f'{config["path"]["inputPath"]}/videos/{filename}')
+
+    try:
+        print('[Custom Targetset]: Convert video into targetset.')
+        video_to_targetset(f'{filename}', f, True)
+    except Exception:
+        print('[Custom Targetset]: An exception has occured.')
         print(traceback.format_exc())
         return 'false'
 
