@@ -101,23 +101,14 @@
 
     socket.addEventListener('open', (event) => {
       console.log(`Socket ${socketURL} has been connected.`);
-
-      status.innerHTML = '<i>Connected</i>';
-      status.style.color = 'green';
     })
 
     socket.addEventListener('error', (event) => {
       console.log(`An error has occured during ${socketURL} socker connection.`);
-
-      status.innerHTML = '<i>Disconnected</i>';
-      status.style.color = 'red';
     })
 
     socket.addEventListener('close', (event) => {
       console.log(`Socket ${socketURL} has been disconnected.`);
-
-      status.innerHTML = '<i>Disconnected</i>';
-      status.style.color = 'red';
     })
 
     socket.addEventListener('message', (event) => {
