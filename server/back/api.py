@@ -1,11 +1,12 @@
 import ssl
 
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 
 import util.request_util as request_util
 import util.image_util as image_util
 import util.response_util as response_util
+import util.video_util as video_util
 
 from util.config_util import CONFIG
 from util.response_util import ResponseCode
@@ -26,11 +27,24 @@ def image_mosaic_post():
 
     image = image_util.from_file(file)
 
+    # 이미지 모자이크 로직 필요.
+
     return response_util.response_image(image)
 
 @app.route('/video/mosaic', methods=['POST'])
 def video_mosaic_post():
-    return ResponseCode.NOT_IMPLEMENTED()
+    if 'file' not in request.files:
+        return ResponseCode.BAD_REQUEST('File not found')
+    file = request.files['file']
+
+    if not request_util.is_allowed_video_format(file.filename):
+        return ResponseCode.BAD_REQUEST('File not found or format not allowed')
+
+    video_path = video_util.save_from_file(file)
+
+    # 동영상 모자이크 로직 필요.
+
+    return send_file(video_path, 'video/mp4')
 
 @app.route('/image/targetset', methods=['POST'])
 def image_targetset_post():
