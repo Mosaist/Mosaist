@@ -2,12 +2,13 @@ import cv2
 import torch
 
 import util.image_util as image_util
+import util.path_util as path_util
 import util.video_util as video_util
 
 from util.config_util import CONFIG
 
 class FaceRecognizer:
-    default_model_path = f'{CONFIG.path.modelPath}/widerface-yolov5n/weights/best.pt'
+    default_model_path = path_util.model_path('widerface-yolov5n')
 
     def __init__(self, model_path=default_model_path):
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', model_path)
@@ -58,13 +59,13 @@ class FaceRecognizer:
         return result
 
     def rect_video(self, video_name):
-        video_path = f'{CONFIG.path.inputPath}/videos/{video_name}'
+        video_path = path_util.input_path(video_name)
         video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
         fps = video_util.get_fps(video)
-        path = f'{CONFIG.path.outputPath}/videos/{video_name}'
+        path = path_util.output_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
         for image in video_util.get_images(video):
@@ -93,12 +94,13 @@ class FaceRecognizer:
         return result
 
     def mosaic_video(self, video_name):
-        video = cv2.VideoCapture(f'{CONFIG.path.inputPath}/videos/{video_name}')
+        video_path = path_util.input_path(video_name)
+        video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
         fps = video_util.get_fps(video)
-        path = f'{CONFIG.path.outputPath}/videos/{video_name}'
+        path = path_util.output_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
         for image in video_util.get_images(video):
