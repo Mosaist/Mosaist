@@ -1,4 +1,5 @@
 import ssl
+import traceback
 
 from flask import Flask, request, send_file
 from flask_cors import CORS
@@ -9,12 +10,16 @@ import util.response_util as response_util
 import util.video_util as video_util
 
 from util.config_util import CONFIG
+from util.exception_util import ColorSpaceNotSupported
 from util.response_util import ResponseCode
+from mosaic.recognizer import FaceRecognizer
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = CONFIG.path.inputPath
 
 CORS(app)
+
+fr = FaceRecognizer()
 
 @app.route('/image/mosaic', methods=['POST'])
 def image_mosaic_post():
@@ -25,9 +30,13 @@ def image_mosaic_post():
     if not request_util.is_allowed_image_format(file.filename):
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
-    image = image_util.from_file(file)
+    try:
+        image = image_util.from_file(file)
+    except ColorSpaceNotSupported:
+        traceback.print_exc()
+        return ResponseCode.BAD_REQUEST('Color space not supported')
 
-    # 이미지 모자이크 로직 필요.
+    image = fr.mosaic_images([image])[0]
 
     return response_util.response_image(image)
 
