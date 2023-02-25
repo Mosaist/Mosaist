@@ -6,7 +6,9 @@ from util.exception_util import ColorSpaceNotSupported
 def from_file(file):
     file_byte = np.fromfile(file, np.uint8)
     image = cv2.imdecode(file_byte, cv2.IMREAD_UNCHANGED)
+    return image
 
+def to_rgb(image):
     if image.shape[2] == 3:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     elif image.shape[2] == 4:
@@ -16,8 +18,10 @@ def from_file(file):
 
     return image
 
+def to_bgr(image):
+    return cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
 def to_png_byte(image):
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return cv2.imencode('.png', image)[1].tobytes()
 
 def pixelate(image):

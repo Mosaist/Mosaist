@@ -1,7 +1,10 @@
+import os
+
 import cv2
 import torch
 
 import util.image_util as image_util
+import util.video_util as video_util
 
 from util.config_util import CONFIG
 
@@ -56,6 +59,27 @@ class FaceRecognizer:
 
         return result
 
+    def rect_video(self, video_name):
+        video = cv2.VideoCapture(f'{CONFIG.path.inputPath}/videos/{video_name}')
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        size = video_util.get_size(video)
+        fps = video_util.get_fps(video)
+        path = f'{CONFIG.path.outputPath}/videos/{video_name}'
+
+        out = cv2.VideoWriter(path, fourcc, fps, size)
+        for image in video_util.get_images(video):
+            image = self.rect_images([image])[0]
+            out.write(image)
+        out.release()
+
+        use_powershell = 'powershell' if os.name == 'nt' else ''
+        os.system(f'{use_powershell} mv {path} {path}.temp')
+        os.system(f'{use_powershell} ffmpeg -i {path}.temp -vcodec libx264 {path}')
+        os.system(f'{use_powershell} rm {path}.temp')
+
+        return path
+
     def mosaic_images(self, images):
         detections = self.images_to_detections(images)
 
@@ -71,3 +95,24 @@ class FaceRecognizer:
             result.append(image)
 
         return result
+
+    def mosaic_video(self, video_name):
+        video = cv2.VideoCapture(f'{CONFIG.path.inputPath}/videos/{video_name}')
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        size = video_util.get_size(video)
+        fps = video_util.get_fps(video)
+        path = f'{CONFIG.path.outputPath}/videos/{video_name}'
+
+        out = cv2.VideoWriter(path, fourcc, fps, size)
+        for image in video_util.get_images(video):
+            image = self.mosaic_images([image])[0]
+            out.write(image)
+        out.release()
+
+        use_powershell = 'powershell' if os.name == 'nt' else ''
+        os.system(f'{use_powershell} mv {path} {path}.temp')
+        os.system(f'{use_powershell} ffmpeg -i {path}.temp -vcodec libx264 {path}')
+        os.system(f'{use_powershell} rm {path}.temp')
+
+        return path

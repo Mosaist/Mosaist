@@ -1,5 +1,4 @@
 import ssl
-import traceback
 
 from flask import Flask, request, send_file
 from flask_cors import CORS
@@ -21,6 +20,34 @@ CORS(app)
 
 fr = FaceRecognizer()
 
+@app.route('/image/rect', methods=['POST'])
+def image_rect_post():
+    if 'file' not in request.files:
+        return ResponseCode.BAD_REQUEST('File not found')
+    file = request.files['file']
+
+    if not request_util.is_allowed_image_format(file.filename):
+        return ResponseCode.BAD_REQUEST('File not found or format not allowed')
+
+    image = image_util.from_file(file)
+    image = fr.rect_images([image])[0]
+
+    return response_util.response_image(image)
+
+@app.route('/video/rect', methods=['POST'])
+def video_rect_post():
+    if 'file' not in request.files:
+        return ResponseCode.BAD_REQUEST('File not found')
+    file = request.files['file']
+
+    if not request_util.is_allowed_video_format(file.filename):
+        return ResponseCode.BAD_REQUEST('File not found or format not allowed')
+
+    video_util.save_from_file(file)
+    video_path = fr.rect_video(file.filename)
+
+    return send_file(video_path, 'video/mp4')
+
 @app.route('/image/mosaic', methods=['POST'])
 def image_mosaic_post():
     if 'file' not in request.files:
@@ -30,12 +57,7 @@ def image_mosaic_post():
     if not request_util.is_allowed_image_format(file.filename):
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
-    try:
-        image = image_util.from_file(file)
-    except ColorSpaceNotSupported:
-        traceback.print_exc()
-        return ResponseCode.BAD_REQUEST('Color space not supported')
-
+    image = image_util.from_file(file)
     image = fr.mosaic_images([image])[0]
 
     return response_util.response_image(image)
@@ -49,9 +71,8 @@ def video_mosaic_post():
     if not request_util.is_allowed_video_format(file.filename):
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
-    video_path = video_util.save_from_file(file)
-
-    # 동영상 모자이크 로직 필요.
+    video_util.save_from_file(file)
+    video_path = fr.mosaic_video(file.filename)
 
     return send_file(video_path, 'video/mp4')
 
