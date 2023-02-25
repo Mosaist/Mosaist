@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, send_file
+from flask import jsonify, make_response
 
 import util.image_util as image_util
 
