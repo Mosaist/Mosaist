@@ -1,6 +1,7 @@
 import os
 
 import cv2
+import ffmpeg
 import torch
 
 import util.image_util as image_util
@@ -73,10 +74,9 @@ class FaceRecognizer:
             out.write(image)
         out.release()
 
-        use_powershell = 'powershell' if os.name == 'nt' else ''
-        os.system(f'{use_powershell} mv {path} {path}.temp')
-        os.system(f'{use_powershell} ffmpeg -i {path}.temp -vcodec libx264 {path}')
-        os.system(f'{use_powershell} rm {path}.temp')
+        os.rename(path, f'{path}.temp')
+        ffmpeg.input(f'{path}.temp').output(path, vcodec='libx264').run()
+        os.remove(f'{path}.temp')
 
         return path
 
@@ -110,9 +110,8 @@ class FaceRecognizer:
             out.write(image)
         out.release()
 
-        use_powershell = 'powershell' if os.name == 'nt' else ''
-        os.system(f'{use_powershell} mv {path} {path}.temp')
-        os.system(f'{use_powershell} ffmpeg -i {path}.temp -vcodec libx264 {path}')
-        os.system(f'{use_powershell} rm {path}.temp')
+        os.rename(path, f'{path}.temp')
+        ffmpeg.input(f'{path}.temp').output(path, vcodec='libx264').run()
+        os.remove(f'{path}.temp')
 
         return path

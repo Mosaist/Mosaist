@@ -1,7 +1,5 @@
 import cv2
 
-import util.image_util as image_util
-
 from util.config_util import CONFIG
 
 def save_from_file(file):
@@ -29,7 +27,7 @@ def get_size(video):
             video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH),
             video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
         )))
-    else :
+    else:
         return tuple(map(int, (
             video.get(cv2.CAP_PROP_FRAME_WIDTH),
             video.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -40,5 +38,5 @@ def get_fps(video):
  
     if int(major_ver) < 3 :
         return video.get(cv2.cv.CV_CAP_PROP_FPS)
-    else :
+    else:
         return video.get(cv2.CAP_PROP_FPS)
