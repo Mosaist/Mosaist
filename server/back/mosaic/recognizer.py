@@ -1,7 +1,4 @@
-import os
-
 import cv2
-import ffmpeg
 import torch
 
 import util.image_util as image_util
@@ -61,7 +58,8 @@ class FaceRecognizer:
         return result
 
     def rect_video(self, video_name):
-        video = cv2.VideoCapture(f'{CONFIG.path.inputPath}/videos/{video_name}')
+        video_path = f'{CONFIG.path.inputPath}/videos/{video_name}'
+        video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
@@ -74,9 +72,7 @@ class FaceRecognizer:
             out.write(image)
         out.release()
 
-        os.rename(path, f'{path}.temp')
-        ffmpeg.input(f'{path}.temp').output(path, vcodec='libx264').run()
-        os.remove(f'{path}.temp')
+        video_util.to_h264(video_name)
 
         return path
 
@@ -110,8 +106,6 @@ class FaceRecognizer:
             out.write(image)
         out.release()
 
-        os.rename(path, f'{path}.temp')
-        ffmpeg.input(f'{path}.temp').output(path, vcodec='libx264').run()
-        os.remove(f'{path}.temp')
+        video_util.to_h264(video_name)
 
         return path

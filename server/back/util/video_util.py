@@ -1,4 +1,7 @@
+import os
+
 import cv2
+import ffmpeg
 
 from util.config_util import CONFIG
 
@@ -40,3 +43,13 @@ def get_fps(video):
         return video.get(cv2.cv.CV_CAP_PROP_FPS)
     else:
         return video.get(cv2.CAP_PROP_FPS)
+    
+def to_h264(video_name):
+    input_path = f'{CONFIG.path.inputPath}/videos/{video_name}'
+    output_path = f'{CONFIG.path.outputPath}/videos/{video_name}'
+
+    os.rename(output_path, f'{output_path}.temp')
+    video_track = ffmpeg.input(f'{output_path}.temp')
+    audio_track = ffmpeg.input(input_path).audio
+    ffmpeg.output(video_track, audio_track, output_path, vcodec='libx264').run()
+    os.remove(f'{output_path}.temp')
