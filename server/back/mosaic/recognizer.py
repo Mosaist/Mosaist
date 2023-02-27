@@ -5,8 +5,11 @@ import util.image_util as image_util
 import util.path_util as path_util
 import util.video_util as video_util
 
+from mosaic.sieve import Sieve
+
 class Recognizer:
     default_model_path = path_util.model_path('widerface-yolov5n')
+    sieve = Sieve()
 
     def __init__(self, model_path=default_model_path):
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', model_path)
@@ -50,6 +53,8 @@ class Recognizer:
             image = image_.copy()
 
             for det in detection:
+                if self.sieve.is_allowed(image_util.face_cut(image, det)):
+                    continue
                 image = cv2.rectangle(image, (det['xmin'], det['ymin']), (det['xmax'], det['ymax']), (0, 255, 0), 3)
 
             result.append(image)
@@ -83,6 +88,8 @@ class Recognizer:
             image = image_.copy()
 
             for det in detection:
+                if self.sieve.is_allowed(image_util.face_cut(image, det)):
+                    continue
                 temp = image[det['ymin']:det['ymax'], det['xmin']:det['xmax']]
                 temp = image_util.pixelate(temp)
                 image[det['ymin']:det['ymax'], det['xmin']:det['xmax']] = temp
