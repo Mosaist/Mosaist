@@ -6,8 +6,14 @@ def model_path(model_name):
 def dataset_path(dataset_name):
     return f'{CONFIG.path.datasetPath}/{dataset_name}'
 
-def input_path(input_name):
-    return f'{CONFIG.path.inputPath}/{input_name}'
+def input_image_path(input_name):
+    return f'{CONFIG.path.inputPath}/images/{input_name}'
 
-def output_path(output_name):
-    return f'{CONFIG.path.outputPath}/{output_name}'
+def input_video_path(input_name):
+    return f'{CONFIG.path.inputPath}/videos/{input_name}'
+
+def output_image_path(output_name):
+    return f'{CONFIG.path.outputPath}/images/{output_name}'
+
+def output_video_path(output_name):
+    return f'{CONFIG.path.outputPath}/videos/{output_name}'
