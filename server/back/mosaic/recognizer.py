@@ -59,7 +59,7 @@ class FaceRecognizer:
         return result
 
     def rect_video(self, video_name):
-        video_path = path_util.input_path(video_name)
+        video_path = path_util.input_video_path(video_name)
         video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -94,7 +94,7 @@ class FaceRecognizer:
         return result
 
     def mosaic_video(self, video_name):
-        video_path = path_util.input_path(video_name)
+        video_path = path_util.input_video_path(video_name)
         video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
