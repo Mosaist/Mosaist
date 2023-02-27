@@ -3,6 +3,7 @@
         "yoloPath": "",
         "modelPath": "",
         "datasetPath": "",
+        "targetsetPath": "",
         "inputPath": "",
         "outputPath": ""
     },
