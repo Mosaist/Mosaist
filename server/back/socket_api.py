@@ -1,14 +1,15 @@
 import datetime
 import ssl
 import asyncio
+
 import websockets
 
 import util.image_util as image_util
 
-from mosaic.recognizer import FaceRecognizer
+from mosaic.recognizer import Recognizer
 from util.config_util import CONFIG
 
-fr = FaceRecognizer()
+rec = Recognizer()
 
 async def socket_root(websocket):
     async for message in websocket:
@@ -31,13 +32,13 @@ async def socket_root(websocket):
 
 def socket_image_rect(content):
     image = image_util.from_socket(content)
-    image = fr.rect_images([image])[0]
+    image = rec.rect_images([image])[0]
 
     return image_util.to_png_byte(image)
 
 def socket_image_mosaic(content):
     image = image_util.from_socket(content)
-    image = fr.mosaic_images([image])[0]
+    image = rec.mosaic_images([image])[0]
 
     return image_util.to_png_byte(image)
 

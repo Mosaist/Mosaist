@@ -5,9 +5,7 @@ import util.image_util as image_util
 import util.path_util as path_util
 import util.video_util as video_util
 
-from util.config_util import CONFIG
-
-class FaceRecognizer:
+class Recognizer:
     default_model_path = path_util.model_path('widerface-yolov5n')
 
     def __init__(self, model_path=default_model_path):
@@ -65,7 +63,7 @@ class FaceRecognizer:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
         fps = video_util.get_fps(video)
-        path = path_util.output_path(video_name)
+        path = path_util.output_video_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
         for image in video_util.get_images(video):
@@ -100,7 +98,7 @@ class FaceRecognizer:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
         fps = video_util.get_fps(video)
-        path = path_util.output_path(video_name)
+        path = path_util.output_video_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
         for image in video_util.get_images(video):

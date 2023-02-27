@@ -11,14 +11,14 @@ import util.video_util as video_util
 from util.config_util import CONFIG
 from util.exception_util import ColorSpaceNotSupported
 from util.response_util import ResponseCode
-from mosaic.recognizer import FaceRecognizer
+from mosaic.recognizer import Recognizer
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = CONFIG.path.inputPath
 
 CORS(app)
 
-fr = FaceRecognizer()
+rec = Recognizer()
 
 @app.route('/image/rect', methods=['POST'])
 def image_rect_post():
@@ -30,7 +30,7 @@ def image_rect_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     image = image_util.from_file(file)
-    image = fr.rect_images([image])[0]
+    image = rec.rect_images([image])[0]
 
     return response_util.response_image(image)
 
@@ -44,7 +44,7 @@ def video_rect_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     video_util.save_from_file(file)
-    video_path = fr.rect_video(file.filename)
+    video_path = rec.rect_video(file.filename)
 
     return send_file(video_path, 'video/mp4')
 
@@ -58,7 +58,7 @@ def image_mosaic_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     image = image_util.from_file(file)
-    image = fr.mosaic_images([image])[0]
+    image = rec.mosaic_images([image])[0]
 
     return response_util.response_image(image)
 
@@ -72,7 +72,7 @@ def video_mosaic_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     video_util.save_from_file(file)
-    video_path = fr.mosaic_video(file.filename)
+    video_path = rec.mosaic_video(file.filename)
 
     return send_file(video_path, 'video/mp4')
 

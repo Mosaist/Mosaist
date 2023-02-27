@@ -5,8 +5,6 @@ import ffmpeg
 
 import util.path_util as path_util
 
-from util.config_util import CONFIG
-
 def save_from_file(file):
     file_name = file.filename
     file_path = path_util.input_video_path(file_name)
@@ -48,7 +46,7 @@ def get_fps(video):
     
 def to_h264(video_name):
     input_path = path_util.input_video_path(video_name)
-    output_path = path_util.output_path(video_name)
+    output_path = path_util.output_video_path(video_name)
 
     os.rename(output_path, f'{output_path}.temp')
     video_track = ffmpeg.input(f'{output_path}.temp')
