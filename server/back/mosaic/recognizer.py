@@ -9,10 +9,10 @@ from mosaic.sieve import Sieve
 
 class Recognizer:
     default_model_path = path_util.model_path('widerface-yolov5n')
-    sieve = Sieve()
 
     def __init__(self, model_path=default_model_path):
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', model_path)
+        self.sieve = Sieve(self)
 
     def set_model(self, model_path):
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', model_path)
@@ -45,7 +45,7 @@ class Recognizer:
             ] for images, result in zip(images, self.model(images).pandas().xyxy)
         ]
 
-    def rect_images(self, images):
+    def process_images(self, images, fun, do_sieve=True):
         detections = self.images_to_detections(images)
 
         result = []
@@ -53,66 +53,62 @@ class Recognizer:
             image = image_.copy()
 
             for det in detection:
-                if self.sieve.is_allowed(image_util.face_cut(image, det)):
-                    continue
-                image = cv2.rectangle(image, (det['xmin'], det['ymin']), (det['xmax'], det['ymax']), (0, 255, 0), 3)
+                if do_sieve:
+                    if self.sieve.is_allowed(image_util.face_cut(image, det)):
+                        continue
+                image = fun(image, det)
 
             result.append(image)
 
         return result
 
-    def rect_video(self, video_name):
+    def process_video(self, video_name, fun, do_sieve=True):
         video_path = path_util.input_video_path(video_name)
         video = cv2.VideoCapture(video_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         size = video_util.get_size(video)
         fps = video_util.get_fps(video)
+        frame_count = video_util.get_frame_count(video)
         path = path_util.output_video_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
+        index = 0
         for image in video_util.get_images(video):
-            image = self.rect_images([image])[0]
+            print(f'[Video processing] {video_name} | {index / frame_count * 100}')
+            image = fun(image, do_sieve)
             out.write(image)
+            index += 1
         out.release()
 
         video_util.to_h264(video_name)
 
         return path
 
-    def mosaic_images(self, images):
-        detections = self.images_to_detections(images)
+    def rect_images_fun(self, image, det):
+        return cv2.rectangle(image, (det['xmin'], det['ymin']), (det['xmax'], det['ymax']), (0, 255, 0), 3)
 
-        result = []
-        for image_, detection in zip(images, detections):
-            image = image_.copy()
+    def mosaic_images_fun(self, image, det):
+        temp = image[det['ymin']:det['ymax'], det['xmin']:det['xmax']]
+        temp = image_util.pixelate(temp)
+        image[det['ymin']:det['ymax'], det['xmin']:det['xmax']] = temp
 
-            for det in detection:
-                if self.sieve.is_allowed(image_util.face_cut(image, det)):
-                    continue
-                temp = image[det['ymin']:det['ymax'], det['xmin']:det['xmax']]
-                temp = image_util.pixelate(temp)
-                image[det['ymin']:det['ymax'], det['xmin']:det['xmax']] = temp
+        return image
 
-            result.append(image)
+    def rect_video_fun(self, image, do_sieve=True):
+        return self.rect_images([image], do_sieve)[0]
 
-        return result
+    def mosaic_video_fun(self, image, do_sieve=True):
+        return self.mosaic_images([image], do_sieve)[0]
 
-    def mosaic_video(self, video_name):
-        video_path = path_util.input_video_path(video_name)
-        video = cv2.VideoCapture(video_path)
+    def rect_images(self, images, do_sieve=True):
+        return self.process_images(images, self.rect_images_fun, do_sieve)
 
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        size = video_util.get_size(video)
-        fps = video_util.get_fps(video)
-        path = path_util.output_video_path(video_name)
+    def mosaic_images(self, images, do_sieve=True):
+        return self.process_images(images, self.mosaic_images_fun, do_sieve)
 
-        out = cv2.VideoWriter(path, fourcc, fps, size)
-        for image in video_util.get_images(video):
-            image = self.mosaic_images([image])[0]
-            out.write(image)
-        out.release()
+    def rect_video(self, video_name, do_sieve=True):
+        return self.process_video(video_name, self.rect_video_fun, do_sieve)
 
-        video_util.to_h264(video_name)
-
-        return path
+    def mosaic_video(self, video_name, do_sieve=True):
+        return self.process_video(video_name, self.mosaic_video_fun, do_sieve)

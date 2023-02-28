@@ -4,21 +4,30 @@ import cv2
 from  deepface import DeepFace
 from deepface.commons import distance as dst
 
+import util.image_util as image_util
 import util.path_util as path_util
 
-from util.config_util import CONFIG
-
 class Sieve:
-    default_targetset_path = CONFIG.path.targetsetPath
+    default_model_name = 'Facenet'
+    default_metric = 'euclidean_l2'
+    default_targetset_name = ''
     allowed_face_embeddings = []
 
-    def __init__(self, targetset_path=default_targetset_path):
-        allowed_images_path = path_util.targetset_path('')
+    def __init__(self, rec, targetset_name=default_targetset_name):
+        allowed_images_path = path_util.targetset_path(targetset_name)
         allowed_images_names = os.listdir(allowed_images_path)
         allowed_images = [cv2.imread(f'{allowed_images_path}/{image_name}', cv2.IMREAD_UNCHANGED) for image_name in allowed_images_names]
 
-        for image in allowed_images:
-            Sieve.allowed_face_embeddings += DeepFace.represent(image, enforce_detection=False)
+        detections = rec.images_to_detections(allowed_images)
+
+        result = []
+        for image_, detection in zip(allowed_images, detections):
+            for det in detection:
+                image = image_util.face_cut(image_, det)
+                result.append(image)
+
+        for image in result:
+            Sieve.allowed_face_embeddings += DeepFace.represent(image, model_name=Sieve.default_model_name, enforce_detection=False)
 
     def verify_embedding(
         self,
@@ -56,14 +65,16 @@ class Sieve:
         return resp_obj
 
     def is_allowed(self, face):
-        temp = DeepFace.represent(face, enforce_detection=False)
+        temp = DeepFace.represent(face, model_name=Sieve.default_model_name, enforce_detection=False)
         if not temp:
             return False
 
-        face_embedding = DeepFace.represent(face, enforce_detection=False)[0]
+        face_embedding = temp[0]
 
         for allowed_embedding in Sieve.allowed_face_embeddings:
-            if self.verify_embedding(face_embedding, allowed_embedding)['verified']:
+            res = self.verify_embedding(face_embedding, allowed_embedding, model_name=Sieve.default_model_name, distance_metric=Sieve.default_metric)
+
+            if res['verified']:
                 return True
 
         return False
