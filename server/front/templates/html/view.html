@@ -21,8 +21,6 @@
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
 
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/notice.css">
-  
-  <link rel="favicon" href="{{ config.server.front.url }}/resource/img/logo/favicon.ico">
 </head>
 <body>
 
@@ -88,42 +86,39 @@
     <div class="board_wrap">
         <div class="board_view_wrap">
             <div class="board_view">
+              {% for item in data_list %}
                 <div class="title">
-                    글 제목이 들어갑니다.
+                    {{item['title']}}
                 </div>
                 <div class="info">
                     <dl>
                         <dt>번호</dt>
-                        <dd>1</dd>
+                        <dd>{{item['num']}}</dd>
                     </dl>
                     <dl>
                         <dt>글쓴이</dt>
-                        <dd>김이름</dd>
+                        <dd>{{item['writer']}}</dd>
                     </dl>
                     <dl>
                         <dt>작성일</dt>
-                        <dd>2021.1.16</dd>
+                        <dd>{{item['posted']}}</dd>
                     </dl>
                     <dl>
                         <dt>조회</dt>
-                        <dd>33</dd>
+                        <dd>{{item['views']}}</dd>
                     </dl>
                 </div>
                 <div class="cont">
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다<br>
-                    글 내용이 들어갑니다
+                  <dd>{{item['context']}}</dd>
                 </div>
+                {% endfor %}
             </div>
+            {% for item in data_list %}
             <div class="bt_wrap">
                 <a href="{{ config.server.front.url }}/list.html" class="btn btn-primary" style="margin-bottom: 12px;">목록</a>
-                <a href="{{ config.server.front.url }}/edit.html" class="btn btn-white" style="border-color: black; margin-bottom: 12px;">수정</a>
+                <a href="{{ config.server.front.url }}/list/edit.html/{{item['num']}}" class="btn btn-white" style="border-color: black; margin-bottom: 12px;">수정</a>
             </div>
+            {% endfor %}
         </div>
     </div>
     <p id="copyright" style="text-align: center; padding: 10px;">&copy; 2023 <a href="https://github.com/Mosaist/Mosaist" style="color:#6610f2;">Mosaist</a>.</p>

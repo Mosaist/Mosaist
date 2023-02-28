@@ -51,10 +51,10 @@
               <a href="{{ config.server.front.url }}/about.html" class="nav-link">About</a>
             </li>
             <li class="nav-item">
-                <a href="{{ config.server.front.url }}/contact.html" class="nav-link">Contact</a>
+              <a href="{{ config.server.front.url }}/contact.html" class="nav-link">Contact</a>
             </li>
             <li class="nav-item active">
-                  <a href="{{ config.server.front.url }}/view.html" class="nav-link">Notice</a>
+                <a href="{{ config.server.front.url }}/view.html" class="nav-link">Notice</a>
             </li>
           </ul>
 
@@ -84,45 +84,55 @@
 
   <main>
     <div class="board_wrap">
-      <div class="board_write_wrap">
-        <div class="board_write">
-          <div class="title">
-            {% for item in data_list %}
-            <form action="{{ config.server.front.url }}/list/edit.html/{{item['num']}}" , method="post">
-              <div class="form-group">
-                <label class="col-md-12" for="txtTitle">Title</label>
-                <div class="col-md-12">
-                  <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md" ,
-                    autofocus required value="{{item['title']}}">
+        <div class="board_write_wrap">
+            <div class="board_write">
+                <div class="title">
+                    <!-- <dl> -->
+                        <form action="{{ config.server.front.url }}/write.html" , method="post">
+                          <fieldset>
+                            <div class="form-group">
+                              <label class="col-md-12" for="txtTitle">Title</label>
+                              <div class="col-md-12">
+                                <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md", autofocus required>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-md-12" for="txtWriter">Writer</label>
+                              <div class="col-md-12">
+                                <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요." class="form-control input-md", autofocus required>
+                              </div>
+                            </div>
+                              <div class="form-group">
+                                <label class="col-md-12" for="txtPost">Post</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="txtPost" name="content" placeholder="내용을 입력하세요." style="height:260px;" required></textarea>
+                                </div>
+                            <div class="form-group">
+                              <div class="bt_wrap">
+                                <input class="btn btn-primary" type="submit" id="button" name="button" style="margin-bottom: 12px;" value="등록" onClick="location.href='{{ config.server.front.url }}/list.html'">
+                                <a href="{{ config.server.front.url }}/list.html" class="btn btn-white" id="button"
+                                  style="border-color: black; margin-bottom: 12px;">취소</a>
+                            
+                              </div>
+                            
+                            
+                            </div>
+
+                           
+                        
+                          </fieldset>
+                          
+                        </form>
+                        
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="col-md-12" for="txtWriter">Writer</label>
-                <div class="col-md-12">
-                  <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요."
-                    class="form-control input-md" , autofocus required value="{{item['writer']}}">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-md-12" for="txtPost">Post</label>
-                <div class="col-md-12">
-                  <textarea class="form-control" id="txtPost" name="content" placeholder="내용을 입력하세요."
-                    style="height:260px;" required >{{item['context']}}</textarea>
-                </div>
-                <div class="form-group">
-                  <div class="bt_wrap">
-                    <input class="btn btn-primary" type="submit" id="button" name="button" style="margin-bottom: 12px;"
-                      value="수정" onClick="location.href='{{ config.server.front.url }}/list.html';">
-                    <a href="{{ config.server.front.url }}/list.html" class="btn btn-white" id="button"
-                      style="border-color: black; margin-bottom: 12px;">취소</a>
-                  </div>
-                </div>
-                </fieldset>
+               
+            <form action="/write", method="post">
+              
+
             </form>
-            {% endfor %}
-          </div>
+          
         </div>
-      </div>
+    </div>
     <p id="copyright" style="text-align: center; padding: 10px;">&copy; 2023 <a href="https://github.com/Mosaist/Mosaist" style="color:#6610f2;">Mosaist</a>.</p>
   </main>
 
