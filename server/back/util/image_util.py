@@ -31,6 +31,9 @@ def to_bgr(image):
 def to_png_byte(image):
     return cv2.imencode('.png', image)[1].tobytes()
 
+def face_cut(image, det):
+    return image[det['ymin']:det['ymax'], det['xmin']:det['xmax']]
+
 def pixelate(image):
     height, width, _ = image.shape
 

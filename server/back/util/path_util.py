@@ -6,6 +6,9 @@ def model_path(model_name):
 def dataset_path(dataset_name):
     return f'{CONFIG.path.datasetPath}/{dataset_name}'
 
+def targetset_path(targetset_name):
+    return f'{CONFIG.path.targetsetPath}/{targetset_name}'
+
 def input_image_path(input_name):
     return f'{CONFIG.path.inputPath}/images/{input_name}'
 

@@ -43,6 +43,14 @@ def get_fps(video):
         return video.get(cv2.cv.CV_CAP_PROP_FPS)
     else:
         return video.get(cv2.CAP_PROP_FPS)
+
+def get_frame_count(video):
+    major_ver, _, _ = (cv2.__version__).split('.')
+ 
+    if int(major_ver) < 3 :
+        return int(video.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
+    else:
+        return int(video.get(cv2.CAP_PROP_FRAME_COUNT))
     
 def to_h264(video_name):
     input_path = path_util.input_video_path(video_name)
@@ -51,5 +59,11 @@ def to_h264(video_name):
     os.rename(output_path, f'{output_path}.temp')
     video_track = ffmpeg.input(f'{output_path}.temp')
     audio_track = ffmpeg.input(input_path).audio
-    ffmpeg.output(video_track, audio_track, output_path, vcodec='libx264').run()
+
+    try:
+        ffmpeg.output(video_track, audio_track, output_path, vcodec='libx264').run()
+    except:
+        print(f'[H264 Encoding] {video_name} doesn\'t contain audio track.')
+        ffmpeg.output(video_track, output_path, vcodec='libx264').run()
+
     os.remove(f'{output_path}.temp')
