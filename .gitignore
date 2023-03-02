@@ -1,11 +1,9 @@
 .vscode
 __pycache__
-node_modules
 
 datasets/*
-environments/*
 inputs/*
 outputs/*
-yolov*
-zips/*
+targetsets/*
 tests/*
+*.pt
