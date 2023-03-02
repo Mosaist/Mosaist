@@ -1,5 +1,6 @@
 ffmpeg-python
 flask
 flask_cors
+pymysql
 websockets
 yolov5
