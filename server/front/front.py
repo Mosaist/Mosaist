@@ -1,7 +1,7 @@
 import os
 import ssl
 import json
-from flask import Flask, render_template, send_file,url_for,request,redirect
+from flask import Flask, render_template, send_file,url_for,request,redirect, jsonify
 import pymysql
 
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
@@ -17,7 +17,7 @@ def connectsql() :
      db = pymysql.connect(host="localhost", user="root", passwd="test", db="notice_board", charset="utf8")
      return db
 
-@app.route('/list')
+
 @app.route('/list.html')
 def notice() :
     db=connectsql()
@@ -26,24 +26,27 @@ def notice() :
     cur.execute(sql)
     data_list=cur.fetchall()
     return render_template('html/list.html', data_list=data_list, config=config)
-@app.route('/list.html')
-@app.route('/write', methods=['POST','GET'])
-@app.route('/write.html', methods =['POST','GET'])
-def write() :
-    if request.method =='POST' :
-         usertitle=request.form['title']
-         writer=request.form['writer']
-         usercontent=request.form['content']
-         db=connectsql()
-         cur=db.cursor()
-         sql="INSERT INTO board (num,title,writer,posted, views,context) VALUES (NULL,%s,%s,DEFAULT,DEFAULT,%s)"
-         value=(usertitle,writer,usercontent)
-         cur.execute(sql,value)
-         db.commit()
-         cur.close()
-         db.close()
-         return redirect(url_for('html/list',config=config))
-    return render_template('html/write.html',config=config)
+
+
+@app.route('/write', methods=['POST', 'GET'])
+def write():
+    if request.method == 'POST':
+        title = request.json["title"]
+        writer = request.json["writer"]
+        content = request.json["content"]
+        try:
+            db = connectsql()
+            cur = db.cursor()
+            sql = "INSERT INTO board (num,title,writer,posted, views,context) VALUES (NULL,%s,%s,DEFAULT,DEFAULT,%s)"
+            value=(title,writer,content)
+            cur.execute(sql,value)
+            db.commit()
+            cur.close()
+            db.close()
+            return jsonify(True)
+        except Exception as e:
+            return jsonify(False)
+
 @app.route('/list/view/<int:num>')
 @app.route('/list/view.html/<int:num>')
 def content(num) :
@@ -67,7 +70,7 @@ def edit(num) :
         value=(edittitle,editcontent,num)
         cur.execute(sql,value)
         db.commit()
-        return render_template('html/edit.html',config=config)
+        return redirect(url_for(f'/list.html',config=config),config=config)
     else :
         db=connectsql()
         cur=db.cursor(pymysql.cursors.DictCursor)
@@ -77,6 +80,28 @@ def edit(num) :
         data_list=cur.fetchall()
         return render_template('html/edit.html',data_list=data_list, config=config)
 
+
+@app.route('/list/test.html/<int:num>',methods=['GET','POST'])
+def edittest(num) :
+    if request.method =='POST' :
+        title = request.json["title"]
+        writer = request.json["writer"]
+        content = request.json["content"]
+        db=connectsql()
+        cur=db.cursor()
+        sql="UPDATE board SET title = %s, writer = %s, context = %s WHERE num= %s"
+        value=(title,writer,content,num)
+        cur.execute(sql,value)
+        db.commit()
+        return jsonify(True)
+    elif request.method=='GET' :
+        db=connectsql()
+        cur=db.cursor(pymysql.cursors.DictCursor)
+        sql ="SELECT * FROM board WHERE num = %s"
+        value=num
+        cur.execute(sql,value)
+        data_list=cur.fetchall()
+        return render_template('html/test.html',data_list=data_list, config=config)
 @app.route('/')
 def root():
     """

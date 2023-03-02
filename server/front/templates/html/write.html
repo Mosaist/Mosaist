@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
 
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/notice.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 
@@ -88,39 +89,70 @@
         <div class="board_write">
           <div class="title">
             <!-- <dl> -->
-            <form action="{{ config.server.front.url }}/write.html" , method="post">
-              <fieldset>
   
-                <div class="form-group">
-                  <label class="col-md-12" for="txtTitle">Title</label>
-                  <div class="col-md-12">
-                    <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md" ,
-                      autofocus required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-12" for="txtWriter">Writer</label>
-                  <div class="col-md-12">
-                    <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요."
-                      class="form-control input-md" , autofocus required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-12" for="txtPost">Post</label>
-                  <div class="col-md-12">
-                    <textarea class="form-control" id="txtPost" name="content" placeholder="내용을 입력하세요."
-                      style="height:260px;" required></textarea>
-                  </div>
-                  <div class="form-group">
-                    <div class="bt_wrap">
-                      <input class="btn btn-primary" type="submit" id="button" name="button" style="margin-bottom: 12px;"
-                        value="등록" >
-                      <a href="{{ config.server.front.url }}/list.html" class="btn btn-white" id="cancel_button"
-                        style="border-color: black; margin-bottom: 12px;">취소</a>
-                    </div>
-                  </div>
-              </fieldset>
-            </form>
+  
+            <div class="form-group">
+              <label class="col-md-12" for="txtTitle">Title</label>
+              <div class="col-md-12">
+                <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md" ,
+                  autofocus required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-md-12" for="txtWriter">Writer</label>
+              <div class="col-md-12">
+                <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요." class="form-control input-md"
+                  , autofocus required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-md-12" for="txtPost">Post</label>
+              <div class="col-md-12">
+                <textarea class="form-control" id="txtPost" name="content" placeholder="내용을 입력하세요." style="height:260px;"
+                  required></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="bt_wrap">
+                <input class="btn btn-primary" type="submit" onclick="myFunction()" style="margin-bottom: 12px;" value="등록">
+                  <a href="{{ config.server.front.url }}/list.html" class="btn btn-white" id="cancel_button"
+                    style="border-color: black; margin-bottom: 12px;">취소</a>
+              </div>
+            </div>
+  
+            <script>
+              function myFunction() {
+                var title = document.getElementById('txtTitle').value;
+                var writer = document.getElementById('txtWriter').value;
+                var content = document.getElementById('txtPost').value;
+
+                console.log("title ", title);
+                console.log("writer ", writer);
+                console.log("content ", content);
+
+
+
+                axios.post(
+                  '/write',
+                  {
+                    title: title,
+                    writer: writer,
+                    content: content,
+
+                  }
+                ).then(function (response) {
+                  console.log(response);
+                  console.log(response.data)
+                  window.location.href="list.html";
+
+
+                }).catch(function (error) {
+                  console.log(error);
+
+
+                })
+              }
+            </script>
           </div>
         </div>
       </div>
