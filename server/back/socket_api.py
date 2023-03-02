@@ -1,35 +1,17 @@
-import json
-import base64
 import datetime
-
-import asyncio
-import cv2
 import ssl
-import numpy as np
+import asyncio
+
 import websockets
 
-from facial_stuffs import *
-from image_stuffs import *
-from video_stuffs import *
+import util.image_util as image_util
 
-config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
-"""
-전역 환경 변수 모음
-"""
+from mosaic.recognizer import Recognizer
+from util.config_util import CONFIG
 
-f = FaceRecognizer()
-"""
-얼굴 인식 관련 모델
-"""
+rec = Recognizer()
 
 async def socket_root(websocket):
-    """
-    웹소켓 서버 루트
-
-    Params:
-        websocket: 웹소켓 인스턴스.
-    """
-
     async for message in websocket:
         method, content = message.split('::')
         response = 'false'
@@ -37,43 +19,36 @@ async def socket_root(websocket):
         print(f'{datetime.datetime.now()} [{method}] {content[:20]}')
 
         try:
-            if method == 'image-mosaic':
-                response = socket_mosaic_image(content)
-            elif method == 'video-mosaic':
-                pass
+            if method == 'image-rect':
+                response = socket_image_rect(content)
+            elif method == 'image-mosaic':
+                response = socket_image_mosaic(content)
             else:
-                pass
+                response = 'Method not found'
         except:
-            pass
+            response = 'Internal server error'
 
         await websocket.send(response)
 
-def socket_mosaic_image(content):
-    """
-    웹소켓에 대응하는 이미지 모자이크
+def socket_image_rect(content):
+    image = image_util.from_socket(content)
+    image = rec.rect_images([image])[0]
 
-    Params:
-        content: 웹소켓으로 전송 받은 이미지 파일.
+    return image_util.to_png_byte(image)
 
-    Returns:
-        변환된 이미지.
-    """
+def socket_image_mosaic(content):
+    image = image_util.from_socket(content)
+    image = rec.mosaic_images([image])[0]
 
-    encoded_image = np.frombuffer(base64.b64decode(content), np.uint8)
-    image = cv2.imdecode(encoded_image, cv2.IMREAD_COLOR)
-
-    detections = f.image_to_detections(image)
-    image = mosaic_image(image, detections[0], f)
-
-    return cv2.imencode('.png', image)[1].tobytes()
+    return image_util.to_png_byte(image)
 
 async def main():
-    print(f' * Running on wss://{config["server"]["ip"]}:{config["server"]["back"]["socketPort"]}')
+    print(f' * Running on wss://{CONFIG.server.ip}:{CONFIG.server.back.socketPort}')
 
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain(certfile=config['server']['sslCert'], keyfile=config['server']['sslKey'])
+    ssl_context.load_cert_chain(certfile=CONFIG.server.sslCert, keyfile=CONFIG.server.sslKey)
 
-    async with websockets.serve(socket_root, config['server']['ip'], config['server']['back']['socketPort'], ssl=ssl_context, max_size=10000000):
+    async with websockets.serve(socket_root, CONFIG.server.ip, CONFIG.server.back.socketPort, ssl=ssl_context, max_size=10000000):
         await asyncio.Future()
 
 if __name__ == '__main__':
