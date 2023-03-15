@@ -21,6 +21,9 @@
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
 
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/notice.css">
+  
+
+  
 </head>
 <body>
 
@@ -85,8 +88,8 @@
   <main>
      <div class="board_wrap">
       <div class="board_list_wrap"> 
-          <div class="board_list"> 
-            <table class="table table-hover table-striped text-center" style="border: 1px solid;">
+        <div class="board_list"> 
+            <table class="table table-hover table-striped text-center" style="border: 1px solid;" name="notice_board">
               <thead>
                 <tr>
                   <th>번호</th>
@@ -94,12 +97,9 @@
                   <th>글쓴이</th>
                   <th>작성일</th>
                   <th>조회수</th>
-            
                 </tr>
               </thead>
-                
               <tbody>
-             
                 {% for item in data_list %}
                 <tr>
                   <td>{{ item['num'] }}</td>
@@ -112,22 +112,21 @@
               </tbody>
             </table>
           </div>
+          {{pagination.links}}
 
-          <div  d="divPaging" class="board_page" style="margin-top: 30px;">
-              <a href="#" class="bt first"><<</a>
-              <a href="#" class="bt prev"><</a>
-              <a href="#" class="num on">1</a>
-              <a href="#" class="num">2</a>
-              <a href="#" class="num">3</a>
-              <a href="#" class="num">4</a>
-              <a href="#" class="num">5</a>
-              <a href="#" class="bt next">></a>
-              <a href="#" class="bt last">>></a>
-          </div>
           <div class="bt_wrap">
-              <a href="{{ config.server.front.url }}/write.html" class="btn btn-primary" style="margin-bottom: 12px;">등록</a>
+            <button class="btn btn-primary" type="submit" onclick="regist()" style="margin-bottom: 12px;" >등록
               <!--<a href="#">수정</a>-->
           </div>
+          </div>
+          </div>
+          <script>
+            function regist(){
+              location.href="{{ config.server.front.url }}/write.html"
+
+            }
+          </script>
+
 
     <p id="copyright" style="text-align: center; padding: 10px;">&copy; 2023 <a href="https://github.com/Mosaist/Mosaist" style="color:#6610f2;">Mosaist</a>.</p>
   </main>
@@ -147,6 +146,7 @@
   <script src="{{ config.server.front.url }}/resource/js/google-maps.js"></script>
 
   <script src="{{ config.server.front.url }}/resource/js/theme.js"></script>
+  
 
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIA_zqjFMsJM_sxP9-6Pde5vVCTyJmUHM&callback=initMap"></script> -->
 

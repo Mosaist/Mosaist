@@ -94,15 +94,13 @@
             <div class="form-group">
               <label class="col-md-12" for="txtTitle">Title</label>
               <div class="col-md-12">
-                <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md" ,
-                  autofocus required>
+                <input id="txtTitle" name="title" type="text" placeholder="제목을 입력하세요." class="form-control input-md"  autofocus required>
               </div>
             </div>
             <div class="form-group">
               <label class="col-md-12" for="txtWriter">Writer</label>
               <div class="col-md-12">
-                <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요." class="form-control input-md"
-                  , autofocus required>
+                <input id="txtWriter" name="writer" type="writer" placeholder="작성자를 입력하세요." class="form-control input-md" required>
               </div>
             </div>
             <div class="form-group">
@@ -114,13 +112,17 @@
             </div>
             <div class="form-group">
               <div class="bt_wrap">
-                <input class="btn btn-primary" type="submit" onclick="myFunction()" style="margin-bottom: 12px;" value="등록">
-                  <a href="{{ config.server.front.url }}/list.html" class="btn btn-white" id="cancel_button"
-                    style="border-color: black; margin-bottom: 12px;">취소</a>
+                <button class="btn btn-primary" type="submit" onclick="myFunction()" style="margin-bottom: 12px;" >등록
+                <button onclick="cancel()" class="btn btn-white" id="cancel_button"
+                    style="border-color: black; margin-bottom: 12px;">취소
               </div>
             </div>
   
             <script>
+              function cancel(){
+                location.href="{{ config.server.front.url }}/list.html"
+
+              }
               function myFunction() {
                 var title = document.getElementById('txtTitle').value;
                 var writer = document.getElementById('txtWriter').value;
