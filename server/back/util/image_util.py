@@ -40,3 +40,34 @@ def pixelate(image):
     temp = cv2.resize(image, (8, 8), interpolation=cv2.INTER_LINEAR)
 
     return cv2.resize(temp, (width, height), interpolation=cv2.INTER_NEAREST)
+
+def split_image(image, rows=2, cols=2, debug=False):
+    height, width = image.shape[:2]     # 원본 사진 크기.
+
+    # 균등하게 나눠질 수 있도록 패딩 추가.
+    while image.shape[0] % rows != 0:
+        image = np.vstack((image, [image[-1]]))
+    while image.shape[1] % cols != 0:
+        image = np.hstack((image, image[:, -1].reshape(image.shape[0], 1, image.shape[2])))
+
+    # 이미지 분할. (rows * cols의 영역으로 분할.)
+    images = np.vsplit(image, rows)
+    images = list(map(lambda section: np.hsplit(section, cols), images))
+
+    # 디버그 옵션 추가 시 분할선 추가.
+    if debug:
+        for imgs in images:
+            for img in imgs:
+                img = cv2.rectangle(img, (0, 0), list(map(lambda e: e - 3, reversed(img.shape[:2]))), (0, 255, 0), 3)
+
+    # 원본 사진 크기 복구.
+    while image.shape[0] != height:
+        image = np.delete(image, -1, axis=0)
+    while image.shape[1] != width:
+        image = np.delete(image, -1, axis=1)
+
+    return images
+
+def merge_images(images):
+    temp = [np.hstack(image_row) for image_row in images]
+    return np.vstack(temp)
