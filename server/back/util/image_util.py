@@ -8,7 +8,7 @@ from util.exception_util import ColorSpaceNotSupported
 def from_file(file):
     file_byte = np.fromfile(file, np.uint8)
     image = cv2.imdecode(file_byte, cv2.IMREAD_UNCHANGED)
-    return image
+    return to_bgr(to_rgb(image))
 
 def from_socket(content):
     encoded_image = np.frombuffer(base64.b64decode(content), np.uint8)
