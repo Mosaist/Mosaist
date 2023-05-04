@@ -58,7 +58,11 @@ def image_mosaic_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     image = image_util.from_file(file)
-    image = rec.mosaic_images([image])[0]
+
+    splited = image_util.split_image(image, rows=1, cols=1, debug=True)
+    splited = [rec.mosaic_images(spls) for spls in splited]
+
+    image = image_util.merge_images(splited)
 
     return response_util.response_image(image)
 
