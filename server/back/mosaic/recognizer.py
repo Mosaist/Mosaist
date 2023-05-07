@@ -4,6 +4,7 @@ import torch
 import util.image_util as image_util
 import util.path_util as path_util
 import util.video_util as video_util
+import util.detection_util as detection_util
 
 from mosaic.sieve import Sieve
 
@@ -27,7 +28,8 @@ class Recognizer:
                     'ymax': int(ymax),
                     'class': cls,
                     'name': name,
-                } for xmin, ymin, xmax, ymax, cls, name in zip(result['xmin'], result['ymin'], result['xmax'], result['ymax'], result['class'], result['name'])
+                    'conf': conf
+                } for xmin, ymin, xmax, ymax, cls, name, conf in zip(result['xmin'], result['ymin'], result['xmax'], result['ymax'], result['class'], result['name'], result['confidence'])
             ] for result in self.model(images).pandas().xyxy
         ]
 
@@ -47,6 +49,7 @@ class Recognizer:
 
     def process_images(self, images, fun, do_sieve=True):
         detections = self.images_to_detections(images)
+        detections = detection_util.apply_detections_nms(detections)
 
         result = []
         for image_, detection in zip(images, detections):
@@ -62,7 +65,17 @@ class Recognizer:
 
         return result
 
-    def process_video(self, video_name, fun, do_sieve=True):
+    def process_images_split(self, images, fun, do_sieve=True, rows=2, cols=2, split_rect=False):
+        result = []
+
+        for image in images:
+            splited = image_util.split_image(image, rows, cols, split_rect)
+            splited = [self.process_images(spls, fun, do_sieve) for spls in splited]
+            result.append(image_util.merge_images(splited))
+
+        return result
+
+    def process_video(self, video_name, fun, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
         video_path = path_util.input_video_path(video_name)
         video = cv2.VideoCapture(video_path)
 
@@ -76,7 +89,7 @@ class Recognizer:
         index = 0
         for image in video_util.get_images(video):
             print(f'[Video processing] {video_name} | {index / frame_count * 100}')
-            image = fun(image, do_sieve)
+            image = fun(image, do_sieve, do_split, rows, cols, split_rect)
             out.write(image)
             index += 1
         out.release()
@@ -95,20 +108,24 @@ class Recognizer:
 
         return image
 
-    def rect_video_fun(self, image, do_sieve=True):
-        return self.rect_images([image], do_sieve)[0]
+    def rect_video_fun(self, image, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        return self.rect_images([image], do_sieve, do_split, rows, cols, split_rect)[0]
 
-    def mosaic_video_fun(self, image, do_sieve=True):
-        return self.mosaic_images([image], do_sieve)[0]
+    def mosaic_video_fun(self, image, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        return self.mosaic_images([image], do_sieve, do_split, rows, cols, split_rect)[0]
 
-    def rect_images(self, images, do_sieve=True):
+    def rect_images(self, images, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        if do_split:
+            return self.process_images_split(images, self.rect_images_fun, do_sieve, rows, cols, split_rect)
         return self.process_images(images, self.rect_images_fun, do_sieve)
 
-    def mosaic_images(self, images, do_sieve=True):
+    def mosaic_images(self, images, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        if do_split:
+            return self.process_images_split(images, self.mosaic_images_fun, do_sieve, rows, cols, split_rect)
         return self.process_images(images, self.mosaic_images_fun, do_sieve)
 
-    def rect_video(self, video_name, do_sieve=True):
-        return self.process_video(video_name, self.rect_video_fun, do_sieve)
+    def rect_video(self, video_name, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        return self.process_video(video_name, self.rect_video_fun, do_sieve, do_split, rows, cols, split_rect)
 
-    def mosaic_video(self, video_name, do_sieve=True):
-        return self.process_video(video_name, self.mosaic_video_fun, do_sieve)
+    def mosaic_video(self, video_name, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        return self.process_video(video_name, self.mosaic_video_fun, do_sieve, do_split, rows, cols, split_rect)
