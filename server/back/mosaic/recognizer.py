@@ -48,10 +48,12 @@ class Recognizer:
         ]
 
     def process_images(self, images, fun, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        detections = self.images_to_detections(images)
+
         if do_split:
             splited_images = [image_util.split_image(image, rows, cols, split_rect) for image in images]
 
-            detections = []
+            detections_split = []
             for splited in splited_images:
                 splited_height, splited_width = splited[0][0].shape[:2]
                 detection = []
@@ -65,10 +67,11 @@ class Recognizer:
                             det['ymax'] += r * splited_height
                         detection.extend(row_detection)
 
-                detections.append(detection)
-        else:
-            detections = self.images_to_detections(images)
-        detections = detection_util.apply_detections_nms(detections)
+                detections_split.append(detection)
+
+            for i in range(len(detections)):
+                detections[i].extend(detections_split[i])
+        detections = detection_util.apply_detections_nms(detections, iou_criteria=0)
 
         result = []
         for image_, detection in zip(images, detections):
