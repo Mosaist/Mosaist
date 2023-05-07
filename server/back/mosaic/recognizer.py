@@ -47,8 +47,27 @@ class Recognizer:
             ] for images, result in zip(images, self.model(images).pandas().xyxy)
         ]
 
-    def process_images(self, images, fun, do_sieve=True):
-        detections = self.images_to_detections(images)
+    def process_images(self, images, fun, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
+        if do_split:
+            splited_images = [image_util.split_image(image, rows, cols, split_rect) for image in images]
+
+            detections = []
+            for splited in splited_images:
+                splited_height, splited_width = splited[0][0].shape[:2]
+                detection = []
+
+                for r, row in enumerate(splited):
+                    for c, row_detection in enumerate(self.images_to_detections(row)):
+                        for det in row_detection:
+                            det['xmin'] += c * splited_width
+                            det['xmax'] += c * splited_width
+                            det['ymin'] += r * splited_height
+                            det['ymax'] += r * splited_height
+                        detection.extend(row_detection)
+
+                detections.append(detection)
+        else:
+            detections = self.images_to_detections(images)
         detections = detection_util.apply_detections_nms(detections)
 
         result = []
@@ -62,16 +81,6 @@ class Recognizer:
                 image = fun(image, det)
 
             result.append(image)
-
-        return result
-
-    def process_images_split(self, images, fun, do_sieve=True, rows=2, cols=2, split_rect=False):
-        result = []
-
-        for image in images:
-            splited = image_util.split_image(image, rows, cols, split_rect)
-            splited = [self.process_images(spls, fun, do_sieve) for spls in splited]
-            result.append(image_util.merge_images(splited))
 
         return result
 
@@ -115,14 +124,10 @@ class Recognizer:
         return self.mosaic_images([image], do_sieve, do_split, rows, cols, split_rect)[0]
 
     def rect_images(self, images, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
-        if do_split:
-            return self.process_images_split(images, self.rect_images_fun, do_sieve, rows, cols, split_rect)
-        return self.process_images(images, self.rect_images_fun, do_sieve)
+        return self.process_images(images, self.rect_images_fun, do_sieve, do_split, rows, cols, split_rect)
 
     def mosaic_images(self, images, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
-        if do_split:
-            return self.process_images_split(images, self.mosaic_images_fun, do_sieve, rows, cols, split_rect)
-        return self.process_images(images, self.mosaic_images_fun, do_sieve)
+        return self.process_images(images, self.mosaic_images_fun, do_sieve, do_split, rows, cols, split_rect)
 
     def rect_video(self, video_name, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
         return self.process_video(video_name, self.rect_video_fun, do_sieve, do_split, rows, cols, split_rect)
