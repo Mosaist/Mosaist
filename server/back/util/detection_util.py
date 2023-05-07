@@ -33,7 +33,7 @@ def get_intersection_of_union(p, q):
     area_inter = get_area(inter)
     return area_inter / (area_p + area_q - area_inter)
 
-def apply_detections_nms(detections):
+def apply_detections_nms(detections, iou_criteria=0.5):
     nms_applied = []
 
     for detection in detections:
@@ -43,7 +43,7 @@ def apply_detections_nms(detections):
         for i, det in enumerate(detection):
             keep = True
             for higher_conf_det in detection[i + 1:]:
-                if get_intersection_of_union(det, higher_conf_det) > 0:
+                if get_intersection_of_union(det, higher_conf_det) > iou_criteria:
                     keep = False
                     break
 
