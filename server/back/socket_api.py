@@ -32,13 +32,13 @@ async def socket_root(websocket):
 
 def socket_image_rect(content):
     image = image_util.from_socket(content)
-    image = rec.rect_images([image])[0]
+    image = rec.rect_images([image], do_sieve=False)[0]
 
     return image_util.to_png_byte(image)
 
 def socket_image_mosaic(content):
     image = image_util.from_socket(content)
-    image = rec.mosaic_images([image])[0]
+    image = rec.rect_images([image], do_sieve=False)[0]
 
     return image_util.to_png_byte(image)
 
