@@ -85,7 +85,7 @@ class Recognizer:
 
             result.append(image)
 
-        return result
+        return result, detections
 
     def process_video(self, video_name, fun, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
         video_path = path_util.input_video_path(video_name)
@@ -98,12 +98,11 @@ class Recognizer:
         path = path_util.output_video_path(video_name)
 
         out = cv2.VideoWriter(path, fourcc, fps, size)
-        index = 0
-        for image in video_util.get_images(video):
+        for index, image in enumerate(video_util.get_images(video)):
             print(f'[Video processing] {video_name} | {index / frame_count * 100}')
-            image = fun(image, do_sieve, do_split, rows, cols, split_rect)
+            image, detections = fun(image, do_sieve, do_split, rows, cols, split_rect)
+            image = image[0]
             out.write(image)
-            index += 1
         out.release()
 
         video_util.to_h264(video_name)
@@ -121,10 +120,10 @@ class Recognizer:
         return image
 
     def rect_video_fun(self, image, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
-        return self.rect_images([image], do_sieve, do_split, rows, cols, split_rect)[0]
+        return self.rect_images([image], do_sieve, do_split, rows, cols, split_rect)
 
     def mosaic_video_fun(self, image, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
-        return self.mosaic_images([image], do_sieve, do_split, rows, cols, split_rect)[0]
+        return self.mosaic_images([image], do_sieve, do_split, rows, cols, split_rect)
 
     def rect_images(self, images, do_sieve=True, do_split=True, rows=2, cols=2, split_rect=False):
         return self.process_images(images, self.rect_images_fun, do_sieve, do_split, rows, cols, split_rect)
