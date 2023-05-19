@@ -1,5 +1,6 @@
 import cv2
 import torch
+import numpy as np
 
 import util.image_util as image_util
 import util.path_util as path_util
@@ -96,12 +97,30 @@ class Recognizer:
         fps = video_util.get_fps(video)
         frame_count = video_util.get_frame_count(video)
         path = path_util.output_video_path(video_name)
-
         out = cv2.VideoWriter(path, fourcc, fps, size)
+
+        prev_image = None
+        prev_corners = None
+        prev_windows = None
+
         for index, image in enumerate(video_util.get_images(video)):
             print(f'[Video processing] {video_name} | {index / frame_count * 100}')
-            image, detections = fun(image, do_sieve, do_split, rows, cols, split_rect)
-            image = image[0]
+            image_temp = image.copy()
+
+            if index % 10 == 0:
+                image, detections = fun(image, do_sieve, do_split, rows, cols, split_rect)
+                image = image[0]
+                prev_corners = [[det['xmin'], det['ymin']] for det in detections[0]]
+                prev_windows = [[det['xmax'] - det['xmin'], det['ymax'] - det['ymin']] for det in detections[0]]
+            else:
+                current_corners, _, _ = cv2.calcOpticalFlowPyrLK(prev_image, image, np.array(prev_corners, dtype=np.float32), None)
+                prev_corners = current_corners
+
+                for corner, window in zip(current_corners, prev_windows):
+                    corner = tuple(map(int, corner))
+                    cv2.rectangle(image, corner, (corner[0] + window[0], corner[1] + window[1]), (255, 0, 0), 3)
+
+            prev_image = image_temp
             out.write(image)
         out.release()
 
