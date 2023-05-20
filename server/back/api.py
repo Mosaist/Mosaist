@@ -30,7 +30,7 @@ def image_rect_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     image = image_util.from_file(file)
-    image = rec.rect_images([image], do_sieve=False)[0]
+    image = rec.rect_images([image], do_sieve=False)[0][0]
 
     return response_util.response_image(image)
 
@@ -58,7 +58,7 @@ def image_mosaic_post():
         return ResponseCode.BAD_REQUEST('File not found or format not allowed')
 
     image = image_util.from_file(file)
-    image = rec.rect_images([image], do_sieve=False)[0]
+    image = rec.rect_images([image], do_sieve=False)[0][0]
 
     return response_util.response_image(image)
 
