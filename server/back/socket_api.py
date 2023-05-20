@@ -19,7 +19,7 @@ async def socket_root(websocket):
         method, content = message.split('::')
         response = 'false'
 
-        print(f'{datetime.datetime.now()} [{method}] {content[:20]}')
+        print(f'{datetime.datetime.now()} {websocket.remote_address}::{websocket.id} - - [{method}] {content[:20]}')
 
         try:
             if method == 'image-rect':
