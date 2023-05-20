@@ -112,7 +112,7 @@ class Recognizer:
                 image = image[0]
                 prev_corners = [[det['xmin'], det['ymin']] for det in detections[0]]
                 prev_windows = [[det['xmax'] - det['xmin'], det['ymax'] - det['ymin']] for det in detections[0]]
-            else:
+            elif len(prev_corners) > 0:
                 current_corners, _, _ = cv2.calcOpticalFlowPyrLK(prev_image, image, np.array(prev_corners, dtype=np.float32), None)
                 prev_corners = current_corners
 
