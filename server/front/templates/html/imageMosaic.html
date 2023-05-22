@@ -70,9 +70,11 @@
                     <p class="message">Drag files to upload</p>
                     <img src="" alt="미리보기 이미지" class="preview">
                   </div>
-                  <label class="btn btn-primary" for="chooseFile">Choose File</label>
-                  <input class="file" id="chooseFile" type="file" onchange="dropFile.handleFiles(this.files)" accept="image/png, image/jpeg, image/gif">
-                  <button class="btn btn-primary" onclick="handleSubmit()">Upload</button>
+                  <div>
+                    <label class="btn btn-primary" for="chooseFile">Choose File</label>
+                    <input class="file" id="chooseFile" type="file" onchange="dropFile.handleFiles(this.files)" accept="image/png, image/jpeg, image/gif">
+                    <label class="btn btn-primary" onclick="handleSubmit()">Upload File</label>
+                  </div>
                 </div>
               </div>
             </div>
