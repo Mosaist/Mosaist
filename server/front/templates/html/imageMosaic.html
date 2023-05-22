@@ -71,7 +71,7 @@
                     <img src="" alt="미리보기 이미지" class="preview">
                   </div>
                   <label class="btn btn-primary" for="chooseFile">Choose File</label>
-                  <input class="file" id="chooseFile" type="file" onchange="dropFile.handleFile(this.files)" accept="image/png, image/jpeg, image/gif">
+                  <input class="file" id="chooseFile" type="file" onchange="dropFile.handleFiles(this.files)" accept="image/png, image/jpeg, image/gif">
                   <button class="btn btn-primary" onclick="handleSubmit()">Upload</button>
                 </div>
               </div>
@@ -142,22 +142,22 @@
         let dt = e.dataTransfer;
         let files = dt.files;
 
+        handleFiles(files);
+      }
+
+      function handleFiles(files) {
         if (files.length > 1) {
-          alert('한 번에 하나의 파일만 불러올 수 있습니다.');
+          alert('한 번에 하나의 파일만 불러올 수 있습니다.')
           return;
         }
-
-        handleFile(files[0]);
 
         const fileList = document.getElementById(fileListId);
         if (fileList) {
           fileList.scrollTo({ top: fileList.scrollHeight });
         }
-      }
 
-      function handleFile(file) {
-        previewFile(file)
-        fileTemp = file;
+        previewFile(files[0])
+        fileTemp = files[0];
       }
 
       function previewFile(file) {
@@ -180,7 +180,7 @@
       dropArea.addEventListener("drop", handleDrop, false);
 
       return {
-        handleFile
+        handleFiles
       };
     }
   </script>
