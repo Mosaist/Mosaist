@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
   
   <link rel="favicon" href="{{ config.server.front.url }}/resource/img/logo/favicon.ico">
+  
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/drag.css">
 
   <style>
     .center {
@@ -69,10 +71,10 @@
               <a href="{{ config.server.front.url }}/list.html" class="nav-link">Notice</a>
             </li>
           </ul>
-
+          <!--
           <div class="ml-auto">
             <a href="#" class="btn btn-outline rounded-pill">Login</a>
-          </div>
+          </div>-->
         </div>
       </div>
     </nav>
@@ -84,6 +86,14 @@
             <div class="text-center wow fadeInUp">
               <h2 class="title-section"><span class="marked">Real-Time</span> Mosaic</h2>
               <div class="divider mx-auto"></div>
+              
+              <select id="browser" onchange="window.open(value, '_self');">
+                <option value='' selected>-- Choose --</option>
+                <option value='imageMosaic.html'>이미지 모자이크</option>
+                <option value='videoMosaic.html'>동영상 모자이크</option>
+                <option value='realTimeMosaic.html'>실시간 모자이크</option>
+              </select>
+              
               <div>
                 <video autoplay="true" id="cam"></video>
                 <img id="out" />
