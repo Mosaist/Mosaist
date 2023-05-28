@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/theme.css">
   
   <link rel="favicon" href="{{ config.server.front.url }}/resource/img/logo/favicon.ico">
+  
+  <link rel="stylesheet" href="{{ config.server.front.url }}/resource/css/drag.css">
 </head>
 <body>
 
@@ -57,10 +59,10 @@
               <a href="{{ config.server.front.url }}/list.html" class="nav-link">Notice</a>
             </li>
           </ul>
-
+          <!--
           <div class="ml-auto">
             <a href="#" class="btn btn-outline rounded-pill">Login</a>
-          </div>
+          </div>-->
         </div>
       </div>
     </nav>
@@ -95,6 +97,7 @@
                 <option value='' selected>-- Choose --</option>
                 <option value='imageMosaic.html'>이미지 모자이크</option>
                 <option value='videoMosaic.html'>동영상 모자이크</option>
+                <option value='realTimeMosaic.html'>실시간 모자이크</option>
               </select>
               
               <form id="upload">
