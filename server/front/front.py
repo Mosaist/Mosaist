@@ -4,12 +4,14 @@ import json
 from flask import Flask, render_template, send_file,url_for,request,redirect, jsonify
 import pymysql
 
+
 config = json.load(open(f'{os.path.dirname(__file__)}/../../config.json'))
 """
 전역 환경 변수 모음
 """
 
 app = Flask(__name__)
+
 """
 플라스크 프론트 서버 인스턴스
 """
@@ -25,6 +27,8 @@ def notice() :
     sql = "SELECT * from board ORDER BY num DESC"
     cur.execute(sql)
     data_list=cur.fetchall()
+
+
     return render_template('html/list.html', data_list=data_list, config=config)
 
 
@@ -50,6 +54,16 @@ def write():
 @app.route('/list/view/<int:num>')
 @app.route('/list/view.html/<int:num>')
 def content(num) :
+    database=connectsql()
+    cursor=database.cursor()
+    query="UPDATE board SET views = views + 1 WHERE num = %s"
+    val=num
+    cursor.execute(query,val)
+    database.commit()
+    cursor.close()
+    database.close()
+
+
     db=connectsql()
     cur=db.cursor(pymysql.cursors.DictCursor)
     sql="SELECT * from board WHERE num = %s"
@@ -58,31 +72,10 @@ def content(num) :
     data_list=cur.fetchall()
     return render_template('html/view.html',data_list=data_list, config=config)
 
-@app.route('/list/edit/<int:num>',methods=['GET','POST'])
+
+
 @app.route('/list/edit.html/<int:num>',methods=['GET','POST'])
 def edit(num) :
-    if request.method =='POST' :
-        edittitle = request.form['title']
-        editcontent=request.form['content']
-        db=connectsql()
-        cur=db.cursor()
-        sql="UPDATE board SET title = %s, context = %s WHERE num= %s"
-        value=(edittitle,editcontent,num)
-        cur.execute(sql,value)
-        db.commit()
-        return redirect(url_for(f'/list.html',config=config),config=config)
-    else :
-        db=connectsql()
-        cur=db.cursor(pymysql.cursors.DictCursor)
-        sql ="SELECT * FROM board WHERE num = %s"
-        value=num
-        cur.execute(sql,value)
-        data_list=cur.fetchall()
-        return render_template('html/edit.html',data_list=data_list, config=config)
-
-
-@app.route('/list/test.html/<int:num>',methods=['GET','POST'])
-def edittest(num) :
     if request.method =='POST' :
         title = request.json["title"]
         writer = request.json["writer"]
@@ -101,7 +94,8 @@ def edittest(num) :
         value=num
         cur.execute(sql,value)
         data_list=cur.fetchall()
-        return render_template('html/test.html',data_list=data_list, config=config)
+        return render_template('html/edit.html',data_list=data_list, config=config)
+
 @app.route('/')
 def root():
     """
@@ -116,7 +110,7 @@ def root():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_file(f'templates/assets/img/logo/favicon.ico')
+    print('hi')
 
 @app.route('/<path:path>')
 def template(path):
@@ -155,4 +149,4 @@ if __name__ == '__main__':
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ssl_context.load_cert_chain(certfile=config['server']['sslCert'], keyfile=config['server']['sslKey'])
 
-        app.run(host=config['server']['ip'], port=config['server']['front']['port'], ssl_context=ssl_context, debug=True)
+        app.run(host=config['server']['ip'], port=config['server']['front']['port'], ssl_context=ssl_context)
