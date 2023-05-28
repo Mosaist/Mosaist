@@ -85,12 +85,23 @@
                 <option value='realTimeMosaic.html'>실시간 모자이크</option>
               </select>
               
-              <form id="upload">
-                  <label for="file"></label>
-                  <div class="btn btn-primary" onclick="document.all.file.click()">Choose file</div>
-                  <input type="file" id="file" accept=".mp4" style="display:none"/>
-                  <button class="btn btn-primary">Upload</button>
-              </form>
+            <div id="root">
+              <div class="contents">
+                <div class="upload-box">
+                  <div id="drop-file" class="drag-file">
+                    <img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일 아이콘" class="image">
+                    <p class="message">Drag files to upload</p>
+                    <video src="" alt="미리보기 동영상" class="preview">
+                  </div>
+                  <div>
+                    <label class="btn btn-primary" for="chooseFile">Choose File</label>
+                    <input class="file" id="chooseFile" type="file" onchange="dropFile.handleFiles(this.files)" accept="video/mp4">
+                    <label class="btn btn-primary" onclick="handleSubmit()">Upload File</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- .container -->
               
               <!--
               <select id="browser" onchange="window.open(value, '_self');">
@@ -122,8 +133,9 @@
 
   <script>
     let form = document.querySelector('#upload');
-    let file = document.querySelector('#file');
     let app = document.querySelector('#app');
+    let dropFile = new DropFile("drop-file", "files");
+    let fileTemp;
 
     function logFile (event) {
         let str = event.target.result;
@@ -135,14 +147,11 @@
     }
 
     async function handleSubmit (event) {
-        event.preventDefault();
-
-        if (!file.value.length)
+        if (!fileTemp)
             return;
 
         let reader = new FileReader();
         reader.onload = logFile;
-        reader.readAsDataURL(file.files[0]);
 
         let previousResult = document.querySelectorAll('.result');
         if (previousResult.length > 0) {
@@ -150,7 +159,7 @@
         }
 
         let formData = new FormData();
-        formData.append('file', file.files[0]);
+        formData.append('file', fileTemp);
 
         let res = await fetch('{{ config.server.back.httpUrl }}/video/mosaic', {
             method: 'POST',
@@ -160,7 +169,72 @@
         reader.readAsDataURL(await res.blob());
     }
 
-    form.addEventListener('submit', handleSubmit);
+    function DropFile(dropAreaId, fileListId) {
+      let dropArea = document.getElementById(dropAreaId);
+      let fileList = document.getElementById(fileListId);
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function highlight(e) {
+        preventDefaults(e);
+        dropArea.classList.add("highlight");
+      }
+
+      function unhighlight(e) {
+        preventDefaults(e);
+        dropArea.classList.remove("highlight");
+      }
+
+      function handleDrop(e) {
+        unhighlight(e);
+        let dt = e.dataTransfer;
+        let files = dt.files;
+
+        handleFiles(files);
+      }
+
+      function handleFiles(files) {
+        if (files.length > 1) {
+          alert('한 번에 하나의 파일만 불러올 수 있습니다.')
+          return;
+        }
+
+        const fileList = document.getElementById(fileListId);
+        if (fileList) {
+          fileList.scrollTo({ top: fileList.scrollHeight });
+        }
+
+        previewFile(files[0])
+        fileTemp = files[0];
+      }
+
+      function previewFile(file) {
+        renderFile(file);
+      }
+
+      function renderFile(file) {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = function () {
+          let vid = dropArea.getElementsByClassName("preview")[0];
+          vid.controls = true;
+          vid.src = reader.result;
+          vid.style.display = "block";
+        };
+      }
+
+      dropArea.addEventListener("dragenter", highlight, false);
+      dropArea.addEventListener("dragover", highlight, false);
+      dropArea.addEventListener("dragleave", unhighlight, false);
+      dropArea.addEventListener("drop", handleDrop, false);
+
+      return {
+        handleFiles
+      };
+    }
 </script>
 
   <script src="{{ config.server.front.url }}/resource/js/jquery-3.5.1.min.js"></script>
