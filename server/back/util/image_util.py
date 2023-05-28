@@ -37,6 +37,9 @@ def face_cut(image, det):
 def pixelate(image):
     height, width, _ = image.shape
 
+    if height == 0 or width == 0:
+        return image
+
     temp = cv2.resize(image, (8, 8), interpolation=cv2.INTER_LINEAR)
 
     return cv2.resize(temp, (width, height), interpolation=cv2.INTER_NEAREST)

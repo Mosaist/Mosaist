@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 
 import util.image_util as image_util
+import util.math_util as math_util
 
 from mosaic.recognizer import Recognizer
 from util.config_util import CONFIG
@@ -51,7 +52,7 @@ def socket_image_mosaic(content, id):
     image_temp = image.copy()
 
     if temp_storage[id]['index'] % 10 == 0:
-        image, detections = rec.rect_images([image], do_sieve=False)
+        image, detections = rec.mosaic_images([image], do_sieve=False)
         image = image[0]
         temp_storage[id]['prev_corners'] = [[det['xmin'], det['ymin']] for det in detections[0]]
         temp_storage[id]['prev_windows'] = [[det['xmax'] - det['xmin'], det['ymax'] - det['ymin']] for det in detections[0]]
@@ -61,7 +62,21 @@ def socket_image_mosaic(content, id):
 
         for corner, window in zip(current_corners, temp_storage[id]['prev_windows']):
             corner = tuple(map(int, corner))
-            cv2.rectangle(image, corner, (corner[0] + window[0], corner[1] + window[1]), (255, 0, 0), 3)
+
+            # mosaic
+            boundary = [
+                (math_util.clamp(corner[0], 0, image.shape[1] - 1),
+                    math_util.clamp(corner[1], 0, image.shape[0] - 1)),
+                (math_util.clamp(corner[0] + window[0], 0, image.shape[1] - 1),
+                    math_util.clamp(corner[1] + window[1], 0, image.shape[0] - 1))
+            ]
+            face_cut = image[boundary[0][1]:boundary[1][1], boundary[0][0]:boundary[1][0]]
+            print(face_cut.shape)
+            face_cut = image_util.pixelate(face_cut)
+            image[boundary[0][1]:boundary[1][1], boundary[0][0]:boundary[1][0]] = face_cut
+
+            # rect
+            # cv2.rectangle(image, corner, (corner[0] + window[0], corner[1] + window[1]), (255, 0, 0), 3)
 
     temp_storage[id]['prev_image'] = image_temp
     temp_storage[id]['index'] += 1
