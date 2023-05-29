@@ -128,7 +128,6 @@ class Recognizer:
                          math_util.clamp(corner[1] + window[1], 0, image.shape[0] - 1))
                     ]
                     face_cut = image[boundary[0][1]:boundary[1][1], boundary[0][0]:boundary[1][0]]
-                    print(face_cut.shape)
                     face_cut = image_util.pixelate(face_cut)
                     image[boundary[0][1]:boundary[1][1], boundary[0][0]:boundary[1][0]] = face_cut
 
